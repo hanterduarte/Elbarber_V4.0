@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'ElBarber') - Sistema de Gerenciamento de Barbearia</title>
     
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <!-- Custom styles -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-    @stack('styles')
+    @yield('css')
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -26,22 +28,24 @@
 
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-user"></i> {{ Auth::user()->name }}
+                <li class="nav-item dropdown user-menu">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                        <i class="far fa-user"></i>
+                        <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Sair
-                            </button>
-                        </form>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                        <li class="user-footer">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-default btn-flat float-right">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </nav>
-        <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -105,7 +109,7 @@
                             </a>
                         </li>
                         
-                        <li class="nav-item has-treeview">
+                        <li class="nav-item has-treeview {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-user-shield"></i>
                                 <p>
@@ -130,12 +134,10 @@
                         </li>
                     </ul>
                 </nav>
-                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.sidebar -->
         </aside>
 
-        <!-- Content Wrapper. Contains page content -->
+        <!-- Content Wrapper -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <div class="content-header">
@@ -153,34 +155,32 @@
                     </div>
                 </div>
             </div>
-            <!-- /.content-header -->
 
             <!-- Main content -->
             <div class="content">
                 <div class="container-fluid">
                     @if(session('success'))
-                    <div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <h5><i class="icon fas fa-check"></i> Sucesso!</h5>
-                        {{ session('success') }}
-                    </div>
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h5><i class="icon fas fa-check"></i> Sucesso!</h5>
+                            {{ session('success') }}
+                        </div>
                     @endif
 
                     @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <h5><i class="icon fas fa-ban"></i> Erro!</h5>
-                        {{ session('error') }}
-                    </div>
+                        <div class="alert alert-danger alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h5><i class="icon fas fa-ban"></i> Erro!</h5>
+                            {{ session('error') }}
+                        </div>
                     @endif
 
                     @yield('content')
                 </div>
             </div>
-            <!-- /.content -->
         </div>
-        <!-- /.content-wrapper -->
 
+        <!-- Main Footer -->
         <footer class="main-footer">
             <div class="float-right d-none d-sm-inline">
                 v1.0.0
@@ -188,8 +188,8 @@
             <strong>Copyright &copy; {{ date('Y') }} <a href="#">ElBarber</a>.</strong> Todos os direitos reservados.
         </footer>
     </div>
-    <!-- ./wrapper -->
 
+    <!-- REQUIRED SCRIPTS -->
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 4 -->
@@ -198,6 +198,6 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <!-- Custom scripts -->
     <script src="{{ asset('js/custom.js') }}"></script>
-    @stack('scripts')
+    @yield('js')
 </body>
 </html> 

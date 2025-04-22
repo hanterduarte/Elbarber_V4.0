@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Sale;
+use App\Models\Service;
+use App\Models\Product;
+use App\Models\Client;
 
 class SaleController extends Controller
 {
@@ -11,7 +15,8 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
+        $sales = Sale::paginate(10);
+        return view('sales.index', compact('sales'));
     }
 
     /**
@@ -60,5 +65,16 @@ class SaleController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Display the PDV interface.
+     */
+    public function pdv()
+    {
+        $services = Service::all();
+        $products = Product::all();
+        $clients = Client::all();
+        return view('pos.index', compact('services', 'products', 'clients'));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Barber;
 
 class BarberController extends Controller
 {
@@ -11,7 +12,8 @@ class BarberController extends Controller
      */
     public function index()
     {
-        //
+        $barbers = Barber::paginate(10);
+        return view('barbers.index', compact('barbers'));
     }
 
     /**

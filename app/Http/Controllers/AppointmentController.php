@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Appointment;
 
 class AppointmentController extends Controller
 {
@@ -11,7 +12,8 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        //
+        $appointments = Appointment::paginate(10);
+        return view('appointments.index', compact('appointments'));
     }
 
     /**
