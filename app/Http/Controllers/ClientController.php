@@ -31,9 +31,17 @@ class ClientController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clients,email',
+            'email' => 'nullable|email|unique:clients,email',
             'phone' => 'required|string|max:20',
-            'address' => 'nullable|string|max:500',
+            'birth_date' => 'required|date',
+            'street' => 'nullable|string|max:255',
+            'number' => 'nullable|string|max:20',
+            'complement' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:10',
+            'reference_point' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
             'is_active' => 'boolean'
         ]);
 
@@ -73,9 +81,17 @@ class ClientController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:clients,email,' . $id,
+            'email' => 'nullable|email|unique:clients,email,' . $id,
             'phone' => 'required|string|max:20',
-            'address' => 'nullable|string|max:500',
+            'birth_date' => 'required|date',
+            'street' => 'nullable|string|max:255',
+            'number' => 'nullable|string|max:20',
+            'complement' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'zip_code' => 'nullable|string|max:10',
+            'reference_point' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
             'is_active' => 'boolean'
         ]);
 
