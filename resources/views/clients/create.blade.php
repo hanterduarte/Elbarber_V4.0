@@ -59,6 +59,7 @@
 
             <div class="form-group">
                 <div class="custom-control custom-switch">
+                    <input type="hidden" name="is_active" value="0">
                     <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
                     <label class="custom-control-label" for="is_active">Cliente Ativo</label>
                 </div>

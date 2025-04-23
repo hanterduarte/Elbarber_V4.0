@@ -12,7 +12,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::paginate(10);
+        $clients = Client::orderBy('id', 'desc')->paginate(10);
         return view('clients.index', compact('clients'));
     }
 
@@ -37,6 +37,9 @@ class ClientController extends Controller
             'is_active' => 'boolean'
         ]);
 
+        // Converte o valor do checkbox para boolean
+        $validated['is_active'] = (bool) $request->input('is_active', true);
+
         $client = Client::create($validated);
 
         return redirect()->route('clients.index')
@@ -48,7 +51,7 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        $client = Client::findOrFail($id);
+        $client = Client::withTrashed()->findOrFail($id);
         return view('clients.show', compact('client'));
     }
 
@@ -76,6 +79,9 @@ class ClientController extends Controller
             'is_active' => 'boolean'
         ]);
 
+        // Converte o valor do checkbox para boolean
+        $validated['is_active'] = (bool) $request->input('is_active', true);
+
         $client->update($validated);
 
         return redirect()->route('clients.index')
@@ -88,6 +94,13 @@ class ClientController extends Controller
     public function destroy(string $id)
     {
         $client = Client::findOrFail($id);
+        
+        // Verifica se o cliente tem agendamentos ou vendas antes de excluir
+        if ($client->appointments()->count() > 0 || $client->sales()->count() > 0) {
+            return redirect()->route('clients.index')
+                ->with('error', 'Não é possível excluir um cliente que possui agendamentos ou vendas.');
+        }
+
         $client->delete();
 
         return redirect()->route('clients.index')
