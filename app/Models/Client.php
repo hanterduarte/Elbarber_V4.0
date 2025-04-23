@@ -17,10 +17,12 @@ class Client extends Model
         'address',
         'birth_date',
         'notes',
+        'is_active',
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     public function appointments()

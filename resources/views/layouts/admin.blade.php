@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     <!-- Custom styles -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css">
     @yield('css')
 </head>
 <body class="hold-transition sidebar-mini">
@@ -51,7 +54,7 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="{{ route('dashboard') }}" class="brand-link">
-                <img src="{{ asset('img/logo.png') }}" alt="ElBarber Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <img src="{{ asset('img/logo.png') }}" alt="ElBarber Logo" class="brand-image" style="opacity: .8; max-height: 33px; margin-left: 0.8rem; margin-right: 0.5rem;">
                 <span class="brand-text font-weight-light">ElBarber</span>
             </a>
 
@@ -198,6 +201,10 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <!-- Custom scripts -->
     <script src="{{ asset('js/custom.js') }}"></script>
-    @yield('js')
+    <!-- InputMask -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.6/jquery.inputmask.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    @stack('scripts')
 </body>
 </html> 

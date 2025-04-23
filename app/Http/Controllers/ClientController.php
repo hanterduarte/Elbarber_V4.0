@@ -21,7 +21,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return view('clients.create');
     }
 
     /**
@@ -29,7 +29,18 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:clients,email',
+            'phone' => 'required|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'is_active' => 'boolean'
+        ]);
+
+        $client = Client::create($validated);
+
+        return redirect()->route('clients.index')
+            ->with('success', 'Cliente cadastrado com sucesso!');
     }
 
     /**
@@ -37,7 +48,8 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $client = Client::findOrFail($id);
+        return view('clients.show', compact('client'));
     }
 
     /**
@@ -45,7 +57,8 @@ class ClientController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $client = Client::findOrFail($id);
+        return view('clients.edit', compact('client'));
     }
 
     /**
@@ -53,7 +66,20 @@ class ClientController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $client = Client::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:clients,email,' . $id,
+            'phone' => 'required|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'is_active' => 'boolean'
+        ]);
+
+        $client->update($validated);
+
+        return redirect()->route('clients.index')
+            ->with('success', 'Cliente atualizado com sucesso!');
     }
 
     /**
@@ -61,6 +87,10 @@ class ClientController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $client = Client::findOrFail($id);
+        $client->delete();
+
+        return redirect()->route('clients.index')
+            ->with('success', 'Cliente excluído com sucesso!');
     }
 }

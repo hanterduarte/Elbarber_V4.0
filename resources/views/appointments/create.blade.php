@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Novo Agendamento')
 
@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <label for="client_id">Cliente</label>
-                <select class="form-control @error('client_id') is-invalid @enderror" id="client_id" name="client_id" required>
+                <select class="form-control select2 @error('client_id') is-invalid @enderror" id="client_id" name="client_id" required>
                     <option value="">Selecione um cliente</option>
                     @foreach($clients as $client)
                         <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
@@ -42,7 +42,7 @@
 
             <div class="form-group">
                 <label for="barber_id">Barbeiro</label>
-                <select class="form-control @error('barber_id') is-invalid @enderror" id="barber_id" name="barber_id" required>
+                <select class="form-control select2 @error('barber_id') is-invalid @enderror" id="barber_id" name="barber_id" required>
                     <option value="">Selecione um barbeiro</option>
                     @foreach($barbers as $barber)
                         <option value="{{ $barber->id }}" {{ old('barber_id') == $barber->id ? 'selected' : '' }}>
@@ -57,7 +57,7 @@
 
             <div class="form-group">
                 <label for="service_id">Serviço</label>
-                <select class="form-control @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
+                <select class="form-control select2 @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
                     <option value="">Selecione um serviço</option>
                     @foreach($services as $service)
                         <option value="{{ $service->id }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>

@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Barber;
+use App\Models\Client;
+use App\Models\Service;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -12,7 +16,9 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::paginate(10);
+        $appointments = Appointment::with(['client', 'barber.user', 'service'])
+            ->orderBy('start_time')
+            ->paginate(10);
         return view('appointments.index', compact('appointments'));
     }
 
@@ -21,7 +27,11 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        //
+        $clients = Client::where('is_active', true)->get();
+        $barbers = Barber::where('is_active', true)->with('user')->get();
+        $services = Service::where('is_active', true)->get();
+        
+        return view('appointments.create', compact('clients', 'barbers', 'services'));
     }
 
     /**
@@ -29,7 +39,35 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'barber_id' => 'required|exists:barbers,id',
+            'service_id' => 'required|exists:services,id',
+            'start_time' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        // Get the service to calculate end time and price
+        $service = Service::findOrFail($validated['service_id']);
+        
+        // Calculate end time based on service duration
+        $startTime = Carbon::parse($validated['start_time']);
+        $endTime = $startTime->copy()->addMinutes($service->duration);
+        
+        // Create appointment with calculated fields
+        $appointment = Appointment::create([
+            'client_id' => $validated['client_id'],
+            'barber_id' => $validated['barber_id'],
+            'service_id' => $validated['service_id'],
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'price' => $service->price,
+            'notes' => $validated['notes'],
+            'status' => 'scheduled'
+        ]);
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Agendamento criado com sucesso!');
     }
 
     /**
@@ -37,7 +75,9 @@ class AppointmentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $appointment = Appointment::with(['client', 'barber.user', 'service'])
+            ->findOrFail($id);
+        return view('appointments.show', compact('appointment'));
     }
 
     /**
@@ -45,7 +85,13 @@ class AppointmentController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $appointment = Appointment::with(['client', 'barber.user', 'service'])
+            ->findOrFail($id);
+        $clients = Client::where('is_active', true)->get();
+        $barbers = Barber::where('is_active', true)->with('user')->get();
+        $services = Service::where('is_active', true)->get();
+        
+        return view('appointments.edit', compact('appointment', 'clients', 'barbers', 'services'));
     }
 
     /**
@@ -53,7 +99,38 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $appointment = Appointment::findOrFail($id);
+
+        $validated = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'barber_id' => 'required|exists:barbers,id',
+            'service_id' => 'required|exists:services,id',
+            'start_time' => 'required|date',
+            'status' => 'required|in:scheduled,confirmed,completed,cancelled',
+            'notes' => 'nullable|string'
+        ]);
+
+        // Get the service to calculate end time and price
+        $service = Service::findOrFail($validated['service_id']);
+        
+        // Calculate end time based on service duration
+        $startTime = Carbon::parse($validated['start_time']);
+        $endTime = $startTime->copy()->addMinutes($service->duration);
+        
+        // Update appointment with calculated fields
+        $appointment->update([
+            'client_id' => $validated['client_id'],
+            'barber_id' => $validated['barber_id'],
+            'service_id' => $validated['service_id'],
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'price' => $service->price,
+            'status' => $validated['status'],
+            'notes' => $validated['notes']
+        ]);
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Agendamento atualizado com sucesso!');
     }
 
     /**
@@ -61,6 +138,10 @@ class AppointmentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $appointment = Appointment::findOrFail($id);
+        $appointment->delete();
+
+        return redirect()->route('appointments.index')
+            ->with('success', 'Agendamento excluído com sucesso!');
     }
 }
