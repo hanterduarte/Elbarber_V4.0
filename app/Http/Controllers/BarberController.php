@@ -217,4 +217,24 @@ class BarberController extends Controller
             return back()->with('error', 'Erro ao excluir barbeiro: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Remove a foto do barbeiro.
+     */
+    public function removePhoto(string $id)
+    {
+        $barber = Barber::findOrFail($id);
+        
+        try {
+            if ($barber->photo) {
+                Storage::disk('public')->delete($barber->photo);
+                $barber->update(['photo' => null]);
+                return response()->json(['message' => 'Foto removida com sucesso!']);
+            }
+            
+            return response()->json(['error' => 'Barbeiro não possui foto para remover.'], 400);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao remover foto: ' . $e->getMessage()], 500);
+        }
+    }
 }

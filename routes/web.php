@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Barber Management
     Route::resource('barbers', BarberController::class);
+    Route::delete('barbers/{barber}/remove-photo', [BarberController::class, 'removePhoto'])->name('barbers.remove-photo');
 
     // Service Management
     Route::resource('services', ServiceController::class);

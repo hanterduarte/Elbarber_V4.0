@@ -66,7 +66,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="photo">Foto</label>
-                        <div class="custom-file">
+                        <div class="custom-file mb-2">
                             <input type="file" class="custom-file-input @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*">
                             <label class="custom-file-label" for="photo">Escolher arquivo</label>
                         </div>
@@ -74,8 +74,15 @@
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                         <div class="mt-2">
-                            <img id="photo-preview" src="{{ $barber->photo ? asset('storage/' . $barber->photo) : asset('images/default-avatar.png') }}" class="img-fluid" style="max-height: 200px;">
+                            <img id="photo-preview" src="{{ $barber->photo ? Storage::url($barber->photo) : asset('images/default-avatar.png') }}" class="img-fluid" style="max-height: 200px;">
                         </div>
+                        @if($barber->photo)
+                        <div class="mt-2">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removePhoto()">
+                                <i class="fas fa-trash"></i> Remover Foto
+                            </button>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -150,5 +157,27 @@ $(document).ready(function() {
         $(this).next('.custom-file-label').html(fileName);
     });
 });
+
+// Função para remover a foto
+function removePhoto() {
+    if (confirm('Tem certeza que deseja remover a foto?')) {
+        $.ajax({
+            url: '{{ route('barbers.remove-photo', $barber->id) }}',
+            type: 'DELETE',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                $('#photo-preview').attr('src', '{{ asset('images/default-avatar.png') }}');
+                $('.custom-file-label').html('Escolher arquivo');
+                $('[onclick="removePhoto()"]').hide();
+                toastr.success('Foto removida com sucesso!');
+            },
+            error: function(xhr) {
+                toastr.error('Erro ao remover foto: ' + xhr.responseJSON.error);
+            }
+        });
+    }
+}
 </script>
 @endpush 
