@@ -17,6 +17,7 @@ class Barber extends Model
         'commission_rate',
         'bio',
         'is_active',
+        'photo'
     ];
 
     protected $casts = [
@@ -37,5 +38,13 @@ class Barber extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->photo) {
+            return asset('storage/' . $this->photo);
+        }
+        return asset('images/default-avatar.png');
     }
 }

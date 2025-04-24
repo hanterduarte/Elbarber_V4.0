@@ -51,4 +51,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('cash-registers', CashRegisterController::class);
     Route::post('cash-registers/open', [CashRegisterController::class, 'open'])->name('cash-registers.open');
     Route::post('cash-registers/close/{cashRegister}', [CashRegisterController::class, 'close'])->name('cash-registers.close');
+    Route::post('cash-registers/withdraw', [CashRegisterController::class, 'withdraw'])->name('cash-registers.withdraw');
 });

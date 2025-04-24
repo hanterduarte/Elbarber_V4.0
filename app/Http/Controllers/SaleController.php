@@ -92,7 +92,7 @@ class SaleController extends Controller
                     ]);
 
                     $subtotal += $saleItem->total;
-                } else {
+                } else if ($item['type'] === 'service') {
                     $service = Service::findOrFail($item['id']);
 
                     // Cria o item da venda

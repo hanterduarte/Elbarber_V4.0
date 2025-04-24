@@ -40,8 +40,8 @@
                     @forelse($barbers as $barber)
                         <tr>
                             <td>{{ $barber->id }}</td>
-                            <td>{{ $barber->name }}</td>
-                            <td>{{ $barber->email }}</td>
+                            <td>{{ $barber->user->name }}</td>
+                            <td>{{ $barber->user->email }}</td>
                             <td>{{ $barber->phone }}</td>
                             <td>
                                 @if($barber->is_active)
