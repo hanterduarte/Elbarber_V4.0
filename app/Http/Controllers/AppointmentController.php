@@ -16,9 +16,23 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $appointments = Appointment::with(['client', 'barber.user', 'service'])
-            ->orderBy('start_time', 'desc')
-            ->paginate(10);
+        $appointments = Appointment::with([
+            'client' => function($query) {
+                $query->withTrashed();
+            },
+            'barber' => function($query) {
+                $query->withTrashed();
+            },
+            'barber.user' => function($query) {
+                $query->withTrashed();
+            },
+            'service' => function($query) {
+                $query->withTrashed();
+            }
+        ])
+        ->orderBy('start_time', 'desc')
+        ->paginate(10);
+        
         return view('appointments.index', compact('appointments'));
     }
 
@@ -75,8 +89,21 @@ class AppointmentController extends Controller
      */
     public function show(string $id)
     {
-        $appointment = Appointment::with(['client', 'barber.user', 'service'])
-            ->findOrFail($id);
+        $appointment = Appointment::with([
+            'client' => function($query) {
+                $query->withTrashed();
+            },
+            'barber' => function($query) {
+                $query->withTrashed();
+            },
+            'barber.user' => function($query) {
+                $query->withTrashed();
+            },
+            'service' => function($query) {
+                $query->withTrashed();
+            }
+        ])->findOrFail($id);
+        
         return view('appointments.show', compact('appointment'));
     }
 

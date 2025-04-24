@@ -42,9 +42,9 @@
                     @forelse($appointments as $appointment)
                         <tr>
                             <td>{{ $appointment->id }}</td>
-                            <td>{{ $appointment->client->name }}</td>
-                            <td>{{ $appointment->barber->user->name }}</td>
-                            <td>{{ $appointment->service->name }}</td>
+                            <td>{{ $appointment->client ? $appointment->client->name : 'Cliente Removido' }}</td>
+                            <td>{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Barbeiro Removido' }}</td>
+                            <td>{{ $appointment->service ? $appointment->service->name : 'Serviço Removido' }}</td>
                             <td>{{ $appointment->start_time->format('d/m/Y') }}</td>
                             <td>{{ $appointment->start_time->format('H:i') }}</td>
                             <td>

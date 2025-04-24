@@ -15,17 +15,43 @@ class DashboardController extends Controller
         $today = Carbon::today();
 
         // Get today's appointments
-        $todayAppointments = Appointment::with(['client', 'barber', 'service'])
-            ->whereDate('start_time', $today)
-            ->orderBy('start_time')
-            ->get();
+        $todayAppointments = Appointment::with([
+            'client' => function($query) {
+                $query->withTrashed();
+            },
+            'barber' => function($query) {
+                $query->withTrashed();
+            },
+            'barber.user' => function($query) {
+                $query->withTrashed();
+            },
+            'service' => function($query) {
+                $query->withTrashed();
+            }
+        ])
+        ->whereDate('start_time', $today)
+        ->orderBy('start_time')
+        ->get();
 
         // Get upcoming appointments
-        $upcomingAppointments = Appointment::with(['client', 'barber', 'service'])
-            ->whereDate('start_time', '>', $today)
-            ->orderBy('start_time')
-            ->limit(5)
-            ->get();
+        $upcomingAppointments = Appointment::with([
+            'client' => function($query) {
+                $query->withTrashed();
+            },
+            'barber' => function($query) {
+                $query->withTrashed();
+            },
+            'barber.user' => function($query) {
+                $query->withTrashed();
+            },
+            'service' => function($query) {
+                $query->withTrashed();
+            }
+        ])
+        ->whereDate('start_time', '>', $today)
+        ->orderBy('start_time')
+        ->limit(5)
+        ->get();
 
         // Get today's revenue
         $todayRevenue = Sale::whereDate('created_at', $today)

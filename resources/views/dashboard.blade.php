@@ -94,9 +94,9 @@
                                 @forelse($todayAppointments as $appointment)
                                     <tr>
                                         <td>{{ $appointment->start_time->format('H:i') }}</td>
-                                        <td>{{ $appointment->client->name }}</td>
-                                        <td>{{ $appointment->barber->user->name }}</td>
-                                        <td>{{ $appointment->service->name }}</td>
+                                        <td>{{ $appointment->client ? $appointment->client->name : 'Cliente Removido' }}</td>
+                                        <td>{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Barbeiro Removido' }}</td>
+                                        <td>{{ $appointment->service ? $appointment->service->name : 'Serviço Removido' }}</td>
                                         <td>
                                             @switch($appointment->status)
                                                 @case('scheduled')
@@ -147,11 +147,26 @@
                             <tbody>
                                 @forelse($upcomingAppointments as $appointment)
                                     <tr>
-                                        <td>{{ $appointment->start_time->format('d/m/Y') }}</td>
-                                        <td>{{ $appointment->start_time->format('H:i') }}</td>
-                                        <td>{{ $appointment->client->name }}</td>
-                                        <td>{{ $appointment->barber->user->name }}</td>
-                                        <td>{{ $appointment->service->name }}</td>
+                                        <td>{{ $appointment->start_time->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $appointment->client ? $appointment->client->name : 'Cliente Removido' }}</td>
+                                        <td>{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Barbeiro Removido' }}</td>
+                                        <td>{{ $appointment->service ? $appointment->service->name : 'Serviço Removido' }}</td>
+                                        <td>
+                                            @switch($appointment->status)
+                                                @case('scheduled')
+                                                    <span class="badge badge-info">Agendado</span>
+                                                    @break
+                                                @case('confirmed')
+                                                    <span class="badge badge-primary">Confirmado</span>
+                                                    @break
+                                                @case('completed')
+                                                    <span class="badge badge-success">Concluído</span>
+                                                    @break
+                                                @case('cancelled')
+                                                    <span class="badge badge-danger">Cancelado</span>
+                                                    @break
+                                            @endswitch
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>

@@ -28,15 +28,15 @@
             </tr>
             <tr>
                 <th>Cliente</th>
-                <td>{{ $appointment->client->name }}</td>
+                <td>{{ $appointment->client ? $appointment->client->name : 'Cliente Removido' }}</td>
             </tr>
             <tr>
                 <th>Barbeiro</th>
-                <td>{{ $appointment->barber->user->name }}</td>
+                <td>{{ $appointment->barber && $appointment->barber->user ? $appointment->barber->user->name : 'Barbeiro Removido' }}</td>
             </tr>
             <tr>
                 <th>Serviço</th>
-                <td>{{ $appointment->service->name }} - R$ {{ number_format($appointment->service->price, 2, ',', '.') }}</td>
+                <td>{{ $appointment->service ? $appointment->service->name . ' - R$ ' . number_format($appointment->service->price, 2, ',', '.') : 'Serviço Removido' }}</td>
             </tr>
             <tr>
                 <th>Data</th>
