@@ -52,6 +52,9 @@
                 @error('photo')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
+                <div id="preview-container" class="mt-2 d-none">
+                    <img id="preview-image" src="#" alt="Preview" class="img-thumbnail" style="max-height: 200px">
+                </div>
             </div>
 
             <div class="row">
@@ -147,10 +150,25 @@
             unmaskAsNumber: true
         });
 
+        // Preview da imagem
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    $('#preview-image').attr('src', e.target.result);
+                    $('#preview-container').removeClass('d-none');
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
         // Preview do nome do arquivo selecionado
         $('.custom-file-input').on('change', function() {
             let fileName = $(this).val().split('\\').pop();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
+            readURL(this);
         });
     });
 </script>
