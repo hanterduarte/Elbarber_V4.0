@@ -4,10 +4,16 @@
 
 @section('styles')
 <style>
+.product-thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
 .product-thumbnail {
     width: 35px;
     height: 35px;
     object-fit: cover;
+    border-radius: 4px;
 }
 </style>
 @endsection
@@ -53,11 +59,17 @@
                         <tr>
                             <td>{{ $product->id }}</td>
                             <td class="text-center">
-                                @if($product->photo)
-                                    <img src="{{ Storage::url($product->photo) }}" alt="Foto do Produto" class="product-thumbnail">
-                                @else
-                                    <img src="{{ asset('img/no-image.png') }}" alt="Sem Foto" class="product-thumbnail">
-                                @endif
+                                <div class="product-thumbnail-container">
+                                    @if($product->photo)
+                                        <img src="{{ Storage::url($product->photo) }}" 
+                                             alt="Foto do Produto" 
+                                             class="product-thumbnail">
+                                    @else
+                                        <img src="{{ asset('img/no-image.png') }}" 
+                                             alt="Sem Foto" 
+                                             class="product-thumbnail">
+                                    @endif
+                                </div>
                             </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ Str::limit($product->description, 50) }}</td>

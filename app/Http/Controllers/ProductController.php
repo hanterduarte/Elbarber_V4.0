@@ -93,10 +93,17 @@ class ProductController extends Controller
             'min_stock' => 'nullable|integer|min:0',
             'photo' => 'nullable|image|max:2048', // máximo 2MB
             'barcode' => 'nullable|string|unique:products,barcode,' . $id,
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'remove_photo' => 'nullable|boolean'
         ]);
 
-        if ($request->hasFile('photo')) {
+        if ($request->input('remove_photo') == '1') {
+            // Remove a foto antiga
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            $validated['photo'] = null;
+        } elseif ($request->hasFile('photo')) {
             // Remove a foto antiga se existir
             if ($product->photo) {
                 Storage::disk('public')->delete($product->photo);

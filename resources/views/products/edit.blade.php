@@ -56,6 +56,10 @@
                 @if($product->photo)
                     <div class="mt-2">
                         <img src="{{ Storage::url($product->photo) }}" alt="Foto do Produto" class="img-thumbnail" style="max-height: 200px">
+                        <input type="hidden" name="remove_photo" id="remove_photo" value="0">
+                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removePhoto()">
+                            <i class="fas fa-trash"></i> Remover Foto
+                        </button>
                     </div>
                 @endif
                 <div id="preview-container" class="mt-2 @if(!$product->photo) d-none @endif">
@@ -177,5 +181,15 @@
             readURL(this);
         });
     });
+
+    // Função para remover a foto
+    function removePhoto() {
+        if (confirm('Tem certeza que deseja remover a foto?')) {
+            $('#remove_photo').val('1');
+            $('.img-thumbnail').hide();
+            $('.custom-file-label').html('Escolher arquivo');
+            $('#photo').val('');
+        }
+    }
 </script>
 @endpush 
