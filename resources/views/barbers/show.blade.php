@@ -28,11 +28,11 @@
             </tr>
             <tr>
                 <th>Nome</th>
-                <td>{{ $barber->name }}</td>
+                <td>{{ $barber->user->name }}</td>
             </tr>
             <tr>
                 <th>Email</th>
-                <td>{{ $barber->email }}</td>
+                <td>{{ $barber->user->email }}</td>
             </tr>
             <tr>
                 <th>Telefone</th>
@@ -98,8 +98,8 @@
                             <td>{{ $appointment->id }}</td>
                             <td>{{ $appointment->client->name }}</td>
                             <td>{{ $appointment->service->name }}</td>
-                            <td>{{ $appointment->date->format('d/m/Y') }}</td>
-                            <td>{{ $appointment->time->format('H:i') }}</td>
+                            <td>{{ $appointment->date ? $appointment->date->format('d/m/Y') : 'N/A' }}</td>
+                            <td>{{ $appointment->time ? $appointment->time->format('H:i') : 'N/A' }}</td>
                             <td>
                                 @switch($appointment->status)
                                     @case('scheduled')

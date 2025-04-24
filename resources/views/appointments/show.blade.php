@@ -32,7 +32,7 @@
             </tr>
             <tr>
                 <th>Barbeiro</th>
-                <td>{{ $appointment->barber->name }}</td>
+                <td>{{ $appointment->barber->user->name }}</td>
             </tr>
             <tr>
                 <th>Serviço</th>
@@ -40,11 +40,11 @@
             </tr>
             <tr>
                 <th>Data</th>
-                <td>{{ $appointment->date->format('d/m/Y') }}</td>
+                <td>{{ $appointment->start_time->format('d/m/Y') }}</td>
             </tr>
             <tr>
                 <th>Horário</th>
-                <td>{{ $appointment->time->format('H:i') }}</td>
+                <td>{{ $appointment->start_time->format('H:i') }}</td>
             </tr>
             <tr>
                 <th>Status</th>

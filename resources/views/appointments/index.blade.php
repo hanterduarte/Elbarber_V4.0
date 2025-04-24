@@ -43,10 +43,10 @@
                         <tr>
                             <td>{{ $appointment->id }}</td>
                             <td>{{ $appointment->client->name }}</td>
-                            <td>{{ $appointment->barber->name }}</td>
+                            <td>{{ $appointment->barber->user->name }}</td>
                             <td>{{ $appointment->service->name }}</td>
-                            <td>{{ $appointment->date->format('d/m/Y') }}</td>
-                            <td>{{ $appointment->time->format('H:i') }}</td>
+                            <td>{{ $appointment->start_time->format('d/m/Y') }}</td>
+                            <td>{{ $appointment->start_time->format('H:i') }}</td>
                             <td>
                                 @if($appointment->status == 'scheduled')
                                     <span class="badge badge-primary">Agendado</span>

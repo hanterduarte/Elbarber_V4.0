@@ -12,8 +12,11 @@
     <div class="card-header">
         <h3 class="card-title">Novo Barbeiro</h3>
     </div>
-    <form action="{{ route('barbers.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('barbers.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
         @csrf
+        <!-- Campo oculto para prevenir autopreenchimento -->
+        <input type="text" style="display:none">
+        <input type="password" style="display:none">
         <div class="card-body">
             @if($errors->any())
                 <div class="alert alert-danger">
@@ -37,7 +40,7 @@
 
                     <div class="form-group">
                         <label for="email">Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required autocomplete="off">
                         @error('email')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
@@ -45,7 +48,7 @@
 
                     <div class="form-group">
                         <label for="password">Senha <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required autocomplete="new-password">
                         @error('password')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
@@ -53,7 +56,7 @@
 
                     <div class="form-group">
                         <label for="password_confirmation">Confirmar Senha <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required autocomplete="new-password">
                     </div>
                 </div>
 

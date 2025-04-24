@@ -64,7 +64,7 @@ class BarberController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
-                'is_active' => $validated['is_active'] ?? true
+                'is_active' => isset($validated['is_active'])
             ]);
 
             // Upload da foto se existir
@@ -79,7 +79,7 @@ class BarberController extends Controller
                 'phone' => $validated['phone'] ?? null,
                 'commission_rate' => $validated['commission_rate'] ?? 50,
                 'bio' => $validated['bio'] ?? null,
-                'is_active' => $validated['is_active'] ?? true,
+                'is_active' => isset($validated['is_active']),
                 'photo' => $photoPath
             ]);
 
@@ -101,7 +101,7 @@ class BarberController extends Controller
      */
     public function show(string $id)
     {
-        $barber = Barber::with('user')->findOrFail($id);
+        $barber = Barber::with(['user', 'appointments.client', 'appointments.service'])->findOrFail($id);
         return view('barbers.show', compact('barber'));
     }
 
@@ -151,7 +151,7 @@ class BarberController extends Controller
             $barber->user->update([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'is_active' => $validated['is_active'] ?? true
+                'is_active' => isset($validated['is_active'])
             ]);
 
             if (!empty($validated['password'])) {
@@ -175,7 +175,7 @@ class BarberController extends Controller
                 'phone' => $validated['phone'] ?? null,
                 'commission_rate' => $validated['commission_rate'] ?? 50,
                 'bio' => $validated['bio'] ?? null,
-                'is_active' => $validated['is_active'] ?? true,
+                'is_active' => isset($validated['is_active']),
                 'photo' => $validated['photo'] ?? $barber->photo
             ]);
 
