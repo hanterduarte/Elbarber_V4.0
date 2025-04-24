@@ -91,7 +91,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="commission_rate">Comissão (%)</label>
-                        <input type="number" class="form-control @error('commission_rate') is-invalid @enderror" id="commission_rate" name="commission_rate" value="{{ old('commission_rate', 50) }}" min="0" max="100" step="0.01">
+                        <input type="number" class="form-control @error('commission_rate') is-invalid @enderror" id="commission_rate" name="commission_rate" value="{{ old('commission_rate', 0) }}" min="0" max="100" step="0.01">
                         @error('commission_rate')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
