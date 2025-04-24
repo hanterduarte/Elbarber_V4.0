@@ -77,7 +77,7 @@ class BarberController extends Controller
             $barber = Barber::create([
                 'user_id' => $user->id,
                 'phone' => $validated['phone'] ?? null,
-                'commission_rate' => $validated['commission_rate'] ?? 50,
+                'commission_rate' => $validated['commission_rate'] ?? 0,
                 'bio' => $validated['bio'] ?? null,
                 'is_active' => isset($validated['is_active']),
                 'photo' => $photoPath
@@ -173,7 +173,7 @@ class BarberController extends Controller
             // Atualizar barbeiro
             $barber->update([
                 'phone' => $validated['phone'] ?? null,
-                'commission_rate' => $validated['commission_rate'] ?? 50,
+                'commission_rate' => $validated['commission_rate'] ?? 0,
                 'bio' => $validated['bio'] ?? null,
                 'is_active' => isset($validated['is_active']),
                 'photo' => $validated['photo'] ?? $barber->photo

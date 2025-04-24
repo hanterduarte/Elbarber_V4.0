@@ -21,46 +21,56 @@
         </div>
     </div>
     <div class="card-body">
-        <table class="table table-bordered">
-            <tr>
-                <th style="width: 200px">ID</th>
-                <td>{{ $barber->id }}</td>
-            </tr>
-            <tr>
-                <th>Nome</th>
-                <td>{{ $barber->user->name }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ $barber->user->email }}</td>
-            </tr>
-            <tr>
-                <th>Telefone</th>
-                <td>{{ $barber->phone }}</td>
-            </tr>
-            <tr>
-                <th>Especialidades</th>
-                <td>{{ $barber->specialties ?? 'Não informadas' }}</td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td>
-                    @if($barber->is_active)
-                        <span class="badge badge-success">Ativo</span>
-                    @else
-                        <span class="badge badge-danger">Inativo</span>
-                    @endif
-                </td>
-            </tr>
-            <tr>
-                <th>Data de Criação</th>
-                <td>{{ $barber->created_at->format('d/m/Y H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Última Atualização</th>
-                <td>{{ $barber->updated_at->format('d/m/Y H:i:s') }}</td>
-            </tr>
-        </table>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <img src="{{ $barber->photo ? asset('storage/' . $barber->photo) : asset('images/default-avatar.png') }}" 
+                     class="img-fluid rounded" 
+                     alt="Foto do barbeiro"
+                     style="max-height: 200px; width: auto;">
+            </div>
+            <div class="col-md-9">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width: 200px">ID</th>
+                        <td>{{ $barber->id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nome</th>
+                        <td>{{ $barber->user->name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ $barber->user->email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Telefone</th>
+                        <td>{{ $barber->phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Especialidades</th>
+                        <td>{{ $barber->specialties ?? 'Não informadas' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            @if($barber->is_active)
+                                <span class="badge badge-success">Ativo</span>
+                            @else
+                                <span class="badge badge-danger">Inativo</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Data de Criação</th>
+                        <td>{{ $barber->created_at->format('d/m/Y H:i:s') }}</td>
+                    </tr>
+                    <tr>
+                        <th>Última Atualização</th>
+                        <td>{{ $barber->updated_at->format('d/m/Y H:i:s') }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="card-footer">
         <form action="{{ route('barbers.destroy', $barber->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir este barbeiro?');">
