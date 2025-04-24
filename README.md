@@ -1,41 +1,55 @@
 # ElBarber - Sistema de Gerenciamento de Barbearia
 
-ElBarber é um sistema de gerenciamento de barbearia com controle de acesso baseado em funções (RBAC - Role-Based Access Control). O sistema permite gerenciar usuários, funções e permissões de forma eficiente e segura.
+ElBarber é um sistema completo para gerenciamento de barbearias, permitindo o controle de barbeiros, clientes, agendamentos, serviços e vendas.
 
-## Funcionalidades
+## Funcionalidades Principais
 
-### Gerenciamento de Usuários
-- Cadastro e gerenciamento de usuários
-- Atribuição de funções aos usuários
-- Autenticação segura
-- Recuperação de senha
+### Gerenciamento de Barbeiros
+- Cadastro e gerenciamento de barbeiros
+- Controle de comissões
+- Upload de fotos de perfil
+- Status ativo/inativo
 
-### Controle de Acesso (RBAC)
-- Gerenciamento de funções (roles)
-- Gerenciamento de permissões
-- Atribuição de permissões às funções
-- Verificação automática de permissões nas rotas
+### Gerenciamento de Clientes
+- Cadastro e gerenciamento de clientes
+- Histórico de agendamentos
+- Histórico de vendas
 
-### Interface Administrativa
-- Dashboard com visão geral do sistema
-- Interface moderna e responsiva usando AdminLTE
-- Navegação intuitiva
-- Mensagens de feedback para ações do usuário
+### Agendamentos
+- Agendamento de serviços
+- Seleção de barbeiro
+- Controle de horários
+- Status do agendamento (agendado, confirmado, concluído, cancelado)
+
+### Serviços
+- Cadastro de serviços
+- Preços
+- Duração
+- Status ativo/inativo
+
+### PDV (Ponto de Venda)
+- Venda de serviços
+- Controle de pagamentos
+- Comissões dos barbeiros
 
 ## Tecnologias Utilizadas
 
-- PHP 8.x
+- PHP 8.2
 - Laravel 10.x
-- MySQL 5.7+
+- MySQL 8.0
+- Bootstrap 5
 - AdminLTE 3.2
-- Bootstrap 4
 - Font Awesome 5
+- jQuery
+- DataTables
+- Select2
+- Inputmask
 
 ## Requisitos do Sistema
 
-- PHP >= 8.1
+- PHP >= 8.2
 - Composer
-- MySQL >= 5.7
+- MySQL >= 8.0
 - Apache ou Nginx
 - Extensões PHP:
   - BCMath
@@ -46,12 +60,14 @@ ElBarber é um sistema de gerenciamento de barbearia com controle de acesso base
   - PDO
   - Tokenizer
   - XML
+  - Fileinfo
+  - GD
 
 ## Instalação
 
 1. Clone o repositório:
 ```bash
-git clone https://seu-repositorio/elbarber.git
+git clone https://github.com/seu-usuario/elbarber.git
 cd elbarber
 ```
 
@@ -76,18 +92,22 @@ DB_USERNAME=seu_usuario
 DB_PASSWORD=sua_senha
 ```
 
-5. Execute as migrações e seeders:
+5. Crie o link simbólico para o storage (necessário para upload de imagens):
 ```bash
-php artisan migrate
-php artisan db:seed
+php artisan storage:link
 ```
 
-6. Inicie o servidor de desenvolvimento:
+6. Execute as migrações e seeders:
+```bash
+php artisan migrate --seed
+```
+
+7. Inicie o servidor de desenvolvimento:
 ```bash
 php artisan serve
 ```
 
-7. Acesse o sistema:
+8. Acesse o sistema:
 - URL: `http://localhost:8000`
 - Email: `admin@elbarber.com`
 - Senha: `password`
@@ -99,54 +119,86 @@ elbarber/
 ├── app/
 │   ├── Http/
 │   │   ├── Controllers/    # Controladores da aplicação
-│   │   └── Middleware/     # Middlewares, incluindo verificação de permissões
-│   │   
-│   └── Models/            # Modelos do Eloquent
+│   │   │   ├── BarberController.php
+│   │   │   ├── ClientController.php
+│   │   │   ├── AppointmentController.php
+│   │   │   ├── ServiceController.php
+│   │   │   └── SaleController.php
+│   │   └── Middleware/     # Middlewares
+│   ├── Models/            # Modelos do Eloquent
+│   │   ├── Barber.php
+│   │   ├── Client.php
+│   │   ├── Appointment.php
+│   │   ├── Service.php
+│   │   └── Sale.php
+│   └── Providers/         # Provedores de serviço
+├── config/               # Arquivos de configuração
 ├── database/
-│   ├── migrations/        # Migrações do banco de dados
-│   └── seeders/          # Seeders para dados iniciais
+│   ├── migrations/       # Migrações do banco de dados
+│   └── seeders/         # Seeders para dados iniciais
+├── public/
+│   ├── css/             # Arquivos CSS compilados
+│   ├── js/              # Arquivos JavaScript compilados
+│   └── storage/         # Arquivos enviados (link simbólico)
 ├── resources/
-│   └── views/            # Views Blade
-│       ├── auth/         # Views de autenticação
-│       ├── layouts/      # Layouts base
-│       ├── users/        # Views de gerenciamento de usuários
-│       ├── roles/        # Views de gerenciamento de funções
-│       └── permissions/  # Views de gerenciamento de permissões
-└── routes/
-    └── web.php          # Definições de rotas
+│   ├── css/             # Arquivos SCSS/CSS fonte
+│   ├── js/              # Arquivos JavaScript fonte
+│   └── views/           # Views Blade
+│       ├── layouts/     # Layouts base
+│       ├── barbers/     # Views de barbeiros
+│       ├── clients/     # Views de clientes
+│       ├── appointments/ # Views de agendamentos
+│       ├── services/    # Views de serviços
+│       └── sales/       # Views de vendas
+├── routes/
+│   └── web.php         # Definições de rotas
+└── storage/
+    └── app/
+        └── public/     # Arquivos enviados (original)
 ```
 
-## Funções Padrão
+## Dependências Frontend
 
-O sistema vem com três funções predefinidas:
+- Bootstrap 5.x
+- AdminLTE 3.2.x
+- jQuery 3.6.x
+- Font Awesome 5.15.x
+- DataTables 1.10.x
+- Select2 4.1.x
+- Inputmask 5.x
+- Moment.js 2.29.x
+- Tempus Dominus 6.x (Datetime Picker)
 
-1. **Administrador**
-   - Acesso total ao sistema
-   - Pode gerenciar usuários, funções e permissões
+## Dependências Backend
 
-2. **Gerente**
-   - Pode gerenciar usuários
-   - Acesso limitado a funções administrativas
+```json
+{
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^10.10",
+        "laravel/sanctum": "^3.2",
+        "laravel/tinker": "^2.8"
+    }
+}
+```
 
-3. **Funcionário**
-   - Acesso básico ao sistema
-   - Visualização de informações limitadas
+## Manutenção
 
-## Segurança
+Para manter o sistema funcionando corretamente:
 
-- Autenticação robusta
-- Proteção contra CSRF
-- Senhas criptografadas
-- Controle de acesso baseado em funções
-- Validação de dados em todas as entradas
+1. Limpe o cache regularmente:
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+```
 
-## Contribuição
+2. Otimize o autoloader:
+```bash
+composer dump-autoload -o
+```
 
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+3. Faça backup do banco de dados e arquivos enviados regularmente
 
 ## Suporte
 
