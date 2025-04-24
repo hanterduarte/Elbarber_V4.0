@@ -2,6 +2,16 @@
 
 @section('title', 'Produtos')
 
+@section('styles')
+<style>
+.product-thumbnail {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+}
+</style>
+@endsection
+
 @section('breadcrumb')
 <li class="breadcrumb-item active">Produtos</li>
 @endsection
@@ -29,6 +39,7 @@
                 <thead>
                     <tr>
                         <th style="width: 60px">ID</th>
+                        <th style="width: 50px">Foto</th>
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th style="width: 120px">Preço</th>
@@ -41,6 +52,13 @@
                     @forelse($products as $product)
                         <tr>
                             <td>{{ $product->id }}</td>
+                            <td class="text-center">
+                                @if($product->photo)
+                                    <img src="{{ Storage::url($product->photo) }}" alt="Foto do Produto" class="product-thumbnail">
+                                @else
+                                    <img src="{{ asset('img/no-image.png') }}" alt="Sem Foto" class="product-thumbnail">
+                                @endif
+                            </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ Str::limit($product->description, 50) }}</td>
                             <td>R$ {{ number_format($product->price, 2, ',', '.') }}</td>
@@ -70,7 +88,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">Nenhum produto encontrado.</td>
+                            <td colspan="8" class="text-center">Nenhum produto encontrado.</td>
                         </tr>
                     @endforelse
                 </tbody>
