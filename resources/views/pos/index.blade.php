@@ -49,7 +49,8 @@
                                                 data-id="{{ $service->id }}"
                                                 data-type="service"
                                                 data-name="{{ $service->name }}"
-                                                data-price="{{ $service->price }}">
+                                                data-price="{{ $service->price }}"
+                                                data-is-active="{{ $service->is_active }}">
                                                 Adicionar
                                             </button>
                                         </div>
@@ -75,7 +76,8 @@
                                                 data-type="product"
                                                 data-name="{{ $product->name }}"
                                                 data-price="{{ $product->price }}"
-                                                data-stock="{{ $product->stock }}">
+                                                data-stock="{{ $product->stock }}"
+                                                data-is-active="{{ $product->is_active }}">
                                                 Adicionar
                                             </button>
                                         </div>

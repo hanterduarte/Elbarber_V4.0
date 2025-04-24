@@ -16,7 +16,7 @@
         @csrf
         <div class="card-body">
             <div class="form-group">
-                <label for="name">Nome</label>
+                <label for="name">Nome <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                 @error('name')
                 <span class="invalid-feedback">{{ $message }}</span>
@@ -32,7 +32,7 @@
             </div>
             
             <div class="form-group">
-                <label for="price">Preço</label>
+                <label for="price">Preço <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">R$</span>
@@ -45,7 +45,7 @@
             </div>
             
             <div class="form-group">
-                <label for="duration">Duração (minutos)</label>
+                <label for="duration">Duração (minutos) <span class="text-danger">*</span></label>
                 <input type="number" class="form-control @error('duration') is-invalid @enderror" id="duration" name="duration" value="{{ old('duration') }}" min="1" required>
                 @error('duration')
                 <span class="invalid-feedback">{{ $message }}</span>
@@ -54,6 +54,7 @@
             
             <div class="form-group">
                 <div class="custom-control custom-switch">
+                    <input type="hidden" name="is_active" value="0">
                     <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
                     <label class="custom-control-label" for="is_active">Ativo</label>
                 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -35,9 +36,21 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
+            'initial_stock' => 'nullable|integer|min:0',
+            'min_stock' => 'nullable|integer|min:0',
+            'photo' => 'nullable|image|max:2048', // máximo 2MB
             'barcode' => 'nullable|string|unique:products,barcode',
             'is_active' => 'boolean'
         ]);
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('products', 'public');
+            $validated['photo'] = $path;
+        }
+
+        if (!isset($validated['initial_stock'])) {
+            $validated['initial_stock'] = $validated['stock'];
+        }
 
         $product = Product::create($validated);
 
@@ -76,9 +89,21 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
+            'initial_stock' => 'nullable|integer|min:0',
+            'min_stock' => 'nullable|integer|min:0',
+            'photo' => 'nullable|image|max:2048', // máximo 2MB
             'barcode' => 'nullable|string|unique:products,barcode,' . $id,
             'is_active' => 'boolean'
         ]);
+
+        if ($request->hasFile('photo')) {
+            // Remove a foto antiga se existir
+            if ($product->photo) {
+                Storage::disk('public')->delete($product->photo);
+            }
+            $path = $request->file('photo')->store('products', 'public');
+            $validated['photo'] = $path;
+        }
 
         $product->update($validated);
 
@@ -92,6 +117,12 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
+        
+        // Remove a foto se existir
+        if ($product->photo) {
+            Storage::disk('public')->delete($product->photo);
+        }
+        
         $product->delete();
 
         return redirect()->route('products.index')

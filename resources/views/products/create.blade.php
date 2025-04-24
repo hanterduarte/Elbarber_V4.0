@@ -12,7 +12,7 @@
     <div class="card-header">
         <h3 class="card-title">Novo Produto</h3>
     </div>
-    <form action="{{ route('products.store') }}" method="POST">
+    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
             @if($errors->any())
@@ -26,7 +26,7 @@
             @endif
 
             <div class="form-group">
-                <label for="name">Nome</label>
+                <label for="name">Nome <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                 @error('name')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -42,28 +42,82 @@
             </div>
 
             <div class="form-group">
-                <label for="price">Preço</label>
+                <label for="photo">Foto do Produto</label>
                 <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">R$</span>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input @error('photo') is-invalid @enderror" id="photo" name="photo" accept="image/*">
+                        <label class="custom-file-label" for="photo">Escolher arquivo</label>
                     </div>
-                    <input type="number" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0" required>
-                    @error('price')
-                        <span class="invalid-feedback">{{ $message }}</span>
-                    @enderror
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="stock">Estoque</label>
-                <input type="number" class="form-control @error('stock') is-invalid @enderror" id="stock" name="stock" value="{{ old('stock', 0) }}" min="0" required>
-                @error('stock')
+                @error('photo')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
             </div>
 
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="price">Preço de Venda <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">R$</span>
+                            </div>
+                            <input type="number" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="{{ old('price') }}" step="0.01" min="0" required>
+                            @error('price')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cost_price">Preço de Custo</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">R$</span>
+                            </div>
+                            <input type="number" class="form-control @error('cost_price') is-invalid @enderror" id="cost_price" name="cost_price" value="{{ old('cost_price') }}" step="0.01" min="0">
+                            @error('cost_price')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="initial_stock">Estoque Inicial</label>
+                        <input type="number" class="form-control @error('initial_stock') is-invalid @enderror" id="initial_stock" name="initial_stock" value="{{ old('initial_stock', 0) }}" min="0">
+                        @error('initial_stock')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="stock">Estoque Atual <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control @error('stock') is-invalid @enderror" id="stock" name="stock" value="{{ old('stock', 0) }}" min="0" required>
+                        @error('stock')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="min_stock">Estoque Mínimo</label>
+                        <input type="number" class="form-control @error('min_stock') is-invalid @enderror" id="min_stock" name="min_stock" value="{{ old('min_stock', 0) }}" min="0">
+                        @error('min_stock')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <div class="custom-control custom-switch">
+                    <input type="hidden" name="is_active" value="0">
                     <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
                     <label class="custom-control-label" for="is_active">Produto Ativo</label>
                 </div>
@@ -81,7 +135,8 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        $('#price').inputmask('currency', {
+        // Máscara para os campos de preço
+        $('#price, #cost_price').inputmask('currency', {
             radixPoint: ',',
             groupSeparator: '.',
             allowMinus: false,
@@ -90,6 +145,12 @@
             digitsOptional: false,
             rightAlign: false,
             unmaskAsNumber: true
+        });
+
+        // Preview do nome do arquivo selecionado
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
         });
     });
 </script>

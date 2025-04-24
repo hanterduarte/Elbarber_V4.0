@@ -31,6 +31,13 @@ $(document).ready(function() {
 
 // Função para adicionar item ao carrinho
 function addToCart(id, type, name, price, stock = null) {
+    const isActive = $(this).data('is-active');
+    
+    if (!isActive) {
+        alert('Este item não está mais disponível.');
+        return;
+    }
+
     const existingItem = cart.find(item => item.id === id && item.type === type);
     
     if (existingItem) {
