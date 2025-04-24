@@ -79,13 +79,21 @@ return new class extends Migration
             $table->foreignId('client_id')->nullable()->constrained();
             $table->foreignId('user_id')->constrained()->comment('User who made the sale');
             $table->foreignId('cash_register_id')->constrained();
-            $table->decimal('total', 10, 2);
+            $table->decimal('subtotal', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
-            $table->enum('payment_method', ['cash', 'credit_card', 'debit_card', 'pix']);
+            $table->decimal('total', 10, 2);
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('completed');
             $table->text('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('sale_payments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('sale_id')->constrained()->onDelete('cascade');
+            $table->enum('method', ['cash', 'credit_card', 'debit_card', 'pix']);
+            $table->decimal('amount', 10, 2);
+            $table->timestamps();
         });
 
         Schema::create('sale_items', function (Blueprint $table) {
@@ -104,6 +112,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('sale_items');
+        Schema::dropIfExists('sale_payments');
         Schema::dropIfExists('sales');
         Schema::dropIfExists('appointments');
         Schema::dropIfExists('cash_registers');

@@ -14,14 +14,15 @@ class Sale extends Model
         'client_id',
         'user_id',
         'cash_register_id',
+        'subtotal',
         'total',
         'discount',
-        'payment_method',
         'status',
         'notes',
     ];
 
     protected $casts = [
+        'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
         'discount' => 'decimal:2',
     ];
@@ -44,5 +45,10 @@ class Sale extends Model
     public function items()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(SalePayment::class);
     }
 }
