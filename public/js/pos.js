@@ -67,6 +67,37 @@ $(document).ready(function() {
             paymentIndex = 1;
         }
     });
+
+    // Atalhos de função
+    $('#btn-open-cashier').click(openCashier);
+    $('#btn-cash-withdrawal').click(cashWithdrawal);
+    $('#btn-cash-reinforcement').click(cashReinforcement);
+    $('#btn-close-cashier').click(closeCashier);
+
+    // Atalhos de teclado
+    $(document).keydown(function(e) {
+        // Evita ativar os atalhos se estiver em um campo de input
+        if ($(e.target).is('input, textarea')) return;
+
+        switch(e.key) {
+            case 'F1':
+                e.preventDefault();
+                openCashier();
+                break;
+            case 'F2':
+                e.preventDefault();
+                cashWithdrawal();
+                break;
+            case 'F3':
+                e.preventDefault();
+                cashReinforcement();
+                break;
+            case 'F4':
+                e.preventDefault();
+                closeCashier();
+                break;
+        }
+    });
 });
 
 // Função para adicionar item ao carrinho
@@ -357,4 +388,169 @@ $('#posForm').submit(function(e) {
             alert(xhr.responseJSON?.error || 'Erro ao processar a venda');
         }
     });
-}); 
+});
+
+// Funções do caixa
+function openCashier() {
+    // Modal de abertura de caixa
+    Swal.fire({
+        title: 'Abertura de Caixa',
+        html: `
+            <div class="form-group">
+                <label>Valor Inicial</label>
+                <input type="number" id="initial-amount" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="opening-notes" class="form-control" rows="3"></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Abrir Caixa',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            return {
+                initial_amount: document.getElementById('initial-amount').value,
+                notes: document.getElementById('opening-notes').value
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar dados para o servidor
+            $.ajax({
+                url: '/cashier/open',
+                method: 'POST',
+                data: result.value,
+                success: function(response) {
+                    Swal.fire('Sucesso!', 'Caixa aberto com sucesso!', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Erro!', xhr.responseJSON?.error || 'Erro ao abrir o caixa', 'error');
+                }
+            });
+        }
+    });
+}
+
+function cashWithdrawal() {
+    // Modal de sangria
+    Swal.fire({
+        title: 'Sangria de Caixa',
+        html: `
+            <div class="form-group">
+                <label>Valor da Sangria</label>
+                <input type="number" id="withdrawal-amount" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Motivo</label>
+                <textarea id="withdrawal-reason" class="form-control" rows="3"></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Realizar Sangria',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            return {
+                amount: document.getElementById('withdrawal-amount').value,
+                reason: document.getElementById('withdrawal-reason').value
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar dados para o servidor
+            $.ajax({
+                url: '/cashier/withdrawal',
+                method: 'POST',
+                data: result.value,
+                success: function(response) {
+                    Swal.fire('Sucesso!', 'Sangria realizada com sucesso!', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Erro!', xhr.responseJSON?.error || 'Erro ao realizar sangria', 'error');
+                }
+            });
+        }
+    });
+}
+
+function cashReinforcement() {
+    // Modal de reforço
+    Swal.fire({
+        title: 'Reforço de Caixa',
+        html: `
+            <div class="form-group">
+                <label>Valor do Reforço</label>
+                <input type="number" id="reinforcement-amount" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="reinforcement-notes" class="form-control" rows="3"></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Realizar Reforço',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            return {
+                amount: document.getElementById('reinforcement-amount').value,
+                notes: document.getElementById('reinforcement-notes').value
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar dados para o servidor
+            $.ajax({
+                url: '/cashier/reinforcement',
+                method: 'POST',
+                data: result.value,
+                success: function(response) {
+                    Swal.fire('Sucesso!', 'Reforço realizado com sucesso!', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Erro!', xhr.responseJSON?.error || 'Erro ao realizar reforço', 'error');
+                }
+            });
+        }
+    });
+}
+
+function closeCashier() {
+    // Modal de fechamento
+    Swal.fire({
+        title: 'Fechamento de Caixa',
+        html: `
+            <div class="form-group">
+                <label>Valor em Caixa</label>
+                <input type="number" id="closing-amount" class="form-control" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="closing-notes" class="form-control" rows="3"></textarea>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Fechar Caixa',
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            return {
+                closing_amount: document.getElementById('closing-amount').value,
+                notes: document.getElementById('closing-notes').value
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Enviar dados para o servidor
+            $.ajax({
+                url: '/cashier/close',
+                method: 'POST',
+                data: result.value,
+                success: function(response) {
+                    Swal.fire('Sucesso!', 'Caixa fechado com sucesso!', 'success');
+                },
+                error: function(xhr) {
+                    Swal.fire('Erro!', xhr.responseJSON?.error || 'Erro ao fechar o caixa', 'error');
+                }
+            });
+        }
+    });
+} 

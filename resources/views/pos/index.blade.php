@@ -94,6 +94,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Nova seção de atalhos de função -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h3 class="card-title">Atalhos de Função</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-info btn-block mb-2" id="btn-open-cashier">
+                            <span class="badge badge-light">F1</span> Abertura de Caixa
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-warning btn-block mb-2" id="btn-cash-withdrawal">
+                            <span class="badge badge-light">F2</span> Sangria de Caixa
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-success btn-block mb-2" id="btn-cash-reinforcement">
+                            <span class="badge badge-light">F3</span> Reforço de Caixa
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-danger btn-block mb-2" id="btn-close-cashier">
+                            <span class="badge badge-light">F4</span> Fechamento de Caixa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-4">
         <div class="card">
