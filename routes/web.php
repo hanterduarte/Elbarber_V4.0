@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashRegisterController;
+use App\Http\Controllers\CashierController;
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -53,4 +54,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('cash-registers/open', [CashRegisterController::class, 'open'])->name('cash-registers.open');
     Route::post('cash-registers/close/{cashRegister}', [CashRegisterController::class, 'close'])->name('cash-registers.close');
     Route::post('cash-registers/withdraw', [CashRegisterController::class, 'withdraw'])->name('cash-registers.withdraw');
+
+    // Rotas do Caixa
+    Route::prefix('cashier')->group(function () {
+        Route::post('/open', [CashierController::class, 'open'])->name('cashier.open');
+        Route::post('/withdrawal', [CashierController::class, 'withdrawal'])->name('cashier.withdrawal');
+        Route::post('/reinforcement', [CashierController::class, 'reinforcement'])->name('cashier.reinforcement');
+        Route::post('/close', [CashierController::class, 'close'])->name('cashier.close');
+    });
 });
