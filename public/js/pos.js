@@ -134,13 +134,17 @@ function updateTotal() {
         total = subtotal - discountValue;
         if (subtotal > 0) {
             const equivalentPercent = (discountValue / subtotal) * 100;
-            // Arredonda para 2 casas decimais para evitar números muito longos
-            $('#discount_percent').val(equivalentPercent.toFixed(2)).trigger('change');
+            // Remove o trigger change para evitar loop infinito
+            $('#discount_percent').val(equivalentPercent.toFixed(2));
         }
-    } else {
+    } else if (discountPercent > 0) {
         const discountAmount = (subtotal * discountPercent) / 100;
         total = subtotal - discountAmount;
         $('#discount_value').val(discountAmount.toFixed(2));
+    } else {
+        total = subtotal;
+        $('#discount_value').val('0');
+        $('#discount_percent').val('0');
     }
 
     total = Math.max(0, total);
@@ -194,21 +198,26 @@ $(document).on('click', '.remove-item', function() {
 });
 
 // Event Listeners para descontos
-$('#discount_percent').change(function() {
+$('#discount_percent').on('input', function() {
     const value = parseFloat($(this).val()) || 0;
     if (value < 0) $(this).val(0);
     if (value > 100) $(this).val(100);
-    $('#discount_value').val(0);
+    $('#discount_value').val('0');
     updateTotal();
 });
 
-$('#discount_value').change(function() {
+$('#discount_value').on('input', function() {
     const value = parseFloat($(this).val()) || 0;
     if (value < 0) $(this).val(0);
     if (value > subtotal) $(this).val(subtotal);
-    if ($(this).val() > 0) {
-        $('#discount_percent').val(0);
-    }
+    $('#discount_percent').val('0');
+    updateTotal();
+});
+
+// Botão limpar desconto
+$('#clear-discount').click(function() {
+    $('#discount_percent').val('0');
+    $('#discount_value').val('0');
     updateTotal();
 });
 

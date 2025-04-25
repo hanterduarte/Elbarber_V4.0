@@ -156,6 +156,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-warning btn-block" id="clear-discount">
+                                    <i class="fas fa-eraser"></i> Limpar Desconto
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
