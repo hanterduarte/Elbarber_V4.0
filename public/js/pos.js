@@ -134,7 +134,8 @@ function updateTotal() {
         total = subtotal - discountValue;
         if (subtotal > 0) {
             const equivalentPercent = (discountValue / subtotal) * 100;
-            $('#discount_percent').val(equivalentPercent.toFixed(2));
+            // Arredonda para 2 casas decimais para evitar números muito longos
+            $('#discount_percent').val(equivalentPercent.toFixed(2)).trigger('change');
         }
     } else {
         const discountAmount = (subtotal * discountPercent) / 100;
@@ -194,11 +195,17 @@ $(document).on('click', '.remove-item', function() {
 
 // Event Listeners para descontos
 $('#discount_percent').change(function() {
+    const value = parseFloat($(this).val()) || 0;
+    if (value < 0) $(this).val(0);
+    if (value > 100) $(this).val(100);
     $('#discount_value').val(0);
     updateTotal();
 });
 
 $('#discount_value').change(function() {
+    const value = parseFloat($(this).val()) || 0;
+    if (value < 0) $(this).val(0);
+    if (value > subtotal) $(this).val(subtotal);
     if ($(this).val() > 0) {
         $('#discount_percent').val(0);
     }
