@@ -6,6 +6,11 @@
 <li class="breadcrumb-item active">PDV</li>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
 <div class="row">
     <div class="col-md-8">
@@ -100,7 +105,7 @@
                     @csrf
                     <div class="form-group">
                         <label for="client_id">Cliente</label>
-                        <select class="form-control" id="client_id" name="client_id">
+                        <select class="form-control select2" id="client_id" name="client_id">
                             <option value="">Selecione um cliente</option>
                             @foreach($clients as $client)
                                 <option value="{{ $client->id }}">{{ $client->name }}</option>
@@ -185,6 +190,10 @@
                         <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
                     </div>
 
+                    <button type="button" class="btn btn-danger btn-block mb-2" id="cancel-sale">
+                        <i class="fas fa-times"></i> Cancelar Venda
+                    </button>
+
                     <button type="submit" class="btn btn-success btn-block">
                         <i class="fas fa-check"></i> Finalizar Venda
                     </button>
@@ -195,6 +204,21 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+    });
+</script>
 <script src="{{ asset('js/pos.js') }}"></script>
 @endpush
 @endsection 

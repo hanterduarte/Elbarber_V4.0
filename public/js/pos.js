@@ -6,6 +6,13 @@ let discountPercent = 0;
 let discountValue = 0;
 let paymentIndex = 1;
 
+// Configuração do CSRF token para todas as requisições AJAX
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 // Event Listeners
 $(document).ready(function() {
     // Adicionar item ao carrinho
@@ -15,6 +22,12 @@ $(document).ready(function() {
         const name = $(this).data('name');
         const price = $(this).data('price');
         const stock = type === 'product' ? $(this).data('stock') : null;
+        const isActive = $(this).data('is-active');
+        
+        if (isActive === 0) {
+            alert('Este item não está mais disponível.');
+            return;
+        }
         
         addToCart(id, type, name, price, stock);
     });
@@ -27,17 +40,37 @@ $(document).ready(function() {
             $(this).closest('.col-md-4').toggle(text.indexOf(search) > -1);
         });
     });
+
+    // Cancelar venda
+    $('#cancel-sale').click(function() {
+        if (confirm('Tem certeza que deseja cancelar a venda?')) {
+            cart = [];
+            updateCart();
+            $('#posForm')[0].reset();
+            $('#payment-methods').html(`
+                <div class="payment-method">
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
+                        <select class="form-control payment-type" name="payments[0][method]" required>
+                            <option value="cash">Dinheiro</option>
+                            <option value="credit_card">Cartão de Crédito</option>
+                            <option value="debit_card">Cartão de Débito</option>
+                            <option value="pix">PIX</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor</label>
+                        <input type="number" class="form-control payment-amount" name="payments[0][amount]" step="0.01" required>
+                    </div>
+                </div>
+            `);
+            paymentIndex = 1;
+        }
+    });
 });
 
 // Função para adicionar item ao carrinho
 function addToCart(id, type, name, price, stock = null) {
-    const isActive = $(this).data('is-active');
-    
-    if (!isActive) {
-        alert('Este item não está mais disponível.');
-        return;
-    }
-
     const existingItem = cart.find(item => item.id === id && item.type === type);
     
     if (existingItem) {
@@ -228,9 +261,6 @@ $('#posForm').submit(function(e) {
         url: $(this).attr('action'),
         method: 'POST',
         data: formData,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
         success: function(response) {
             alert('Venda realizada com sucesso!');
             cart = [];
