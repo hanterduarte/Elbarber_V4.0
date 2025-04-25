@@ -134,7 +134,6 @@ function updateTotal() {
         total = subtotal - discountValue;
         if (subtotal > 0) {
             const equivalentPercent = (discountValue / subtotal) * 100;
-            // Remove o trigger change para evitar loop infinito
             $('#discount_percent').val(equivalentPercent.toFixed(2));
         }
     } else if (discountPercent > 0) {
@@ -150,12 +149,10 @@ function updateTotal() {
     total = Math.max(0, total);
     $('#total').text(`R$ ${total.toFixed(2).replace('.', ',')}`);
     
-    // Atualiza o valor do primeiro campo de pagamento apenas se estiver vazio ou for menor que o total
+    // Sempre atualiza o valor do primeiro campo de pagamento com o valor total após desconto
     const firstPayment = $('.payment-amount').first();
-    const currentValue = parseFloat(firstPayment.val()) || 0;
-    if (firstPayment.val() === '' || currentValue < total) {
-        firstPayment.val(total.toFixed(2));
-    }
+    firstPayment.val(total.toFixed(2));
+    
     updateTroco();
 }
 
