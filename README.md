@@ -202,7 +202,7 @@ composer dump-autoload -o
 
 ## Suporte
 
-Para suporte, envie um email para suporte@elbarber.com ou abra uma issue no repositório.
+Para suporte ou sugestões, envie um email para hanterduarte@gmail.com ou abra uma issue no repositório.
 
 ## Licença
 
