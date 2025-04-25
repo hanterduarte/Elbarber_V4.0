@@ -10,11 +10,11 @@ return new class extends Migration
     {
         Schema::create('cashier_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cashier_id')->constrained()->onDelete('cascade');
+            $table->foreignId('cashier_id')->constrained('cashiers')->onDelete('cascade');
             $table->enum('type', ['opening', 'closing', 'sale', 'withdrawal', 'reinforcement']);
             $table->decimal('amount', 10, 2);
             $table->text('notes')->nullable();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

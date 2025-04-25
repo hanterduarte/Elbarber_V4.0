@@ -8,6 +8,19 @@ return new class extends Migration
 {
     public function up()
     {
+        // Verifica se a tabela users existe, se não, cria
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('email')->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
+
         Schema::create('cashiers', function (Blueprint $table) {
             $table->id();
             $table->dateTime('opening_date');
@@ -19,7 +32,7 @@ return new class extends Migration
             $table->enum('status', ['open', 'closed'])->default('open');
             $table->text('opening_notes')->nullable();
             $table->text('closing_notes')->nullable();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

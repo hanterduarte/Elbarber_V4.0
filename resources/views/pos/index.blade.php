@@ -232,13 +232,15 @@
                         <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
                     </div>
 
-                    <button type="button" class="btn btn-danger btn-block mb-2" id="cancel-sale">
-                        <i class="fas fa-times"></i> Cancelar Venda
-                    </button>
+                    <div class="btn-group-vertical w-100">
+                        <button type="button" class="btn btn-danger mb-2" id="cancel-sale">
+                            <i class="fas fa-times"></i> Cancelar Venda
+                        </button>
 
-                    <button type="submit" class="btn btn-success btn-block">
-                        <i class="fas fa-check"></i> Finalizar Venda
-                    </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Finalizar Venda
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

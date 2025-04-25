@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\CashierMovement;
 use App\Models\Cashier;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class CashierController extends Controller
@@ -13,10 +14,14 @@ class CashierController extends Controller
     public function open(Request $request)
     {
         try {
-            $request->validate([
+            Log::info('Tentativa de abertura de caixa', ['request' => $request->all()]);
+
+            $validated = $request->validate([
                 'initial_amount' => 'required|numeric|min:0',
                 'notes' => 'nullable|string|max:500'
             ]);
+
+            Log::info('Dados validados', ['validated' => $validated]);
 
             // Verifica se já existe um caixa aberto
             $openCashier = Cashier::where('status', 'open')->first();
@@ -26,30 +31,50 @@ class CashierController extends Controller
 
             DB::beginTransaction();
 
-            // Cria o registro do caixa
-            $cashier = Cashier::create([
-                'opening_date' => Carbon::now(),
-                'opening_amount' => $request->initial_amount,
-                'current_amount' => $request->initial_amount,
-                'status' => 'open',
-                'opening_notes' => $request->notes,
-                'user_id' => auth()->id()
-            ]);
+            try {
+                // Cria o registro do caixa
+                $cashier = Cashier::create([
+                    'opening_date' => Carbon::now(),
+                    'opening_amount' => $request->initial_amount,
+                    'current_amount' => $request->initial_amount,
+                    'status' => 'open',
+                    'opening_notes' => $request->notes,
+                    'user_id' => auth()->id()
+                ]);
 
-            // Registra o movimento de abertura
-            CashierMovement::create([
-                'cashier_id' => $cashier->id,
-                'type' => 'opening',
-                'amount' => $request->initial_amount,
-                'notes' => $request->notes,
-                'user_id' => auth()->id()
-            ]);
+                Log::info('Caixa criado', ['cashier' => $cashier]);
 
-            DB::commit();
-            return response()->json(['message' => 'Caixa aberto com sucesso!']);
+                // Registra o movimento de abertura
+                $movement = CashierMovement::create([
+                    'cashier_id' => $cashier->id,
+                    'type' => 'opening',
+                    'amount' => $request->initial_amount,
+                    'notes' => $request->notes,
+                    'user_id' => auth()->id()
+                ]);
+
+                Log::info('Movimento registrado', ['movement' => $movement]);
+
+                DB::commit();
+                return response()->json(['message' => 'Caixa aberto com sucesso!']);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Erro na transação do banco', [
+                    'error' => $e->getMessage(),
+                    'line' => $e->getLine(),
+                    'file' => $e->getFile()
+                ]);
+                throw $e;
+            }
         } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Erro ao abrir o caixa: ' . $e->getMessage()], 500);
+            Log::error('Erro ao abrir o caixa', [
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ]);
+            return response()->json([
+                'error' => 'Erro ao abrir o caixa: ' . $e->getMessage()
+            ], 500);
         }
     }
 
