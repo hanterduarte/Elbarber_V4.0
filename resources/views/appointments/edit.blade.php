@@ -42,12 +42,12 @@
             </div>
 
             <div class="form-group">
-                <label for="barber_id">Barbeiro</label>
-                <select class="form-control @error('barber_id') is-invalid @enderror" id="barber_id" name="barber_id" required>
+                <label for="barber_id">Barbeiro <span class="text-danger">*</span></label>
+                <select class="form-control select2 @error('barber_id') is-invalid @enderror" id="barber_id" name="barber_id" required>
                     <option value="">Selecione um barbeiro</option>
                     @foreach($barbers as $barber)
                         <option value="{{ $barber->id }}" {{ old('barber_id', $appointment->barber_id) == $barber->id ? 'selected' : '' }}>
-                            {{ $barber->name }}
+                            {{ $barber->user->name }}
                         </option>
                     @endforeach
                 </select>
@@ -57,8 +57,8 @@
             </div>
 
             <div class="form-group">
-                <label for="service_id">Serviço</label>
-                <select class="form-control @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
+                <label for="service_id">Serviço <span class="text-danger">*</span></label>
+                <select class="form-control select2 @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
                     <option value="">Selecione um serviço</option>
                     @foreach($services as $service)
                         <option value="{{ $service->id }}" {{ old('service_id', $appointment->service_id) == $service->id ? 'selected' : '' }}>
@@ -71,24 +71,29 @@
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="date">Data</label>
-                <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" value="{{ old('date', $appointment->date->format('Y-m-d')) }}" required>
-                @error('date')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="date">Data <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" value="{{ old('date', $appointment->start_time->format('Y-m-d')) }}" required>
+                        @error('date')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="time">Horário <span class="text-danger">*</span></label>
+                        <input type="time" class="form-control @error('time') is-invalid @enderror" id="time" name="time" value="{{ old('time', $appointment->start_time->format('H:i')) }}" required>
+                        @error('time')
+                            <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="time">Horário</label>
-                <input type="time" class="form-control @error('time') is-invalid @enderror" id="time" name="time" value="{{ old('time', $appointment->time->format('H:i')) }}" required>
-                @error('time')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="status">Status</label>
+                <label for="status">Status <span class="text-danger">*</span></label>
                 <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required>
                     <option value="scheduled" {{ old('status', $appointment->status) == 'scheduled' ? 'selected' : '' }}>Agendado</option>
                     <option value="confirmed" {{ old('status', $appointment->status) == 'confirmed' ? 'selected' : '' }}>Confirmado</option>
