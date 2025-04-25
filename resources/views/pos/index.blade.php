@@ -176,7 +176,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Valor</label>
-                                <input type="number" class="form-control payment-amount" name="payments[0][amount]" step="0.01" required>
+                                <input type="number" class="form-control payment-amount" name="payments[0][amount]" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Troco</label>
+                                <h5 id="troco" class="text-primary mb-0">R$ 0,00</h5>
                             </div>
                         </div>
                     </div>

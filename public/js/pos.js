@@ -108,10 +108,10 @@ function updateCart() {
                 <td>${item.name}</td>
                 <td>
                     <input type="number" class="form-control form-control-sm quantity" 
-                        value="${item.quantity}" min="1" data-index="${index}">
+                        value="${item.quantity}" min="1" data-index="${index}" style="width: 70px">
                 </td>
-                <td class="text-right">R$ ${item.price.toFixed(2)}</td>
-                <td class="text-right">R$ ${itemTotal.toFixed(2)}</td>
+                <td class="text-right">R$ ${item.price.toFixed(2).replace('.', ',')}</td>
+                <td class="text-right">R$ ${itemTotal.toFixed(2).replace('.', ',')}</td>
                 <td class="text-center">
                     <button type="button" class="btn btn-danger btn-sm remove-item" data-index="${index}">
                         <i class="fas fa-trash"></i>
@@ -121,7 +121,7 @@ function updateCart() {
         `);
     });
 
-    $('#subtotal').text(`R$ ${subtotal.toFixed(2)}`);
+    $('#subtotal').text(`R$ ${subtotal.toFixed(2).replace('.', ',')}`);
     updateTotal();
 }
 
@@ -143,8 +143,26 @@ function updateTotal() {
     }
 
     total = Math.max(0, total);
-    $('#total').text(`R$ ${total.toFixed(2)}`);
-    $('.payment-amount').first().val(total.toFixed(2));
+    $('#total').text(`R$ ${total.toFixed(2).replace('.', ',')}`);
+    
+    // Atualiza o valor do primeiro campo de pagamento apenas se estiver vazio ou for menor que o total
+    const firstPayment = $('.payment-amount').first();
+    const currentValue = parseFloat(firstPayment.val()) || 0;
+    if (firstPayment.val() === '' || currentValue < total) {
+        firstPayment.val(total.toFixed(2));
+    }
+    updateTroco();
+}
+
+// Função para calcular e atualizar o troco
+function updateTroco() {
+    const valorPago = parseFloat($('.payment-amount').first().val()) || 0;
+    if (valorPago > total) {
+        const troco = valorPago - total;
+        $('#troco').text(`R$ ${troco.toFixed(2).replace('.', ',')}`);
+    } else {
+        $('#troco').text('R$ 0,00');
+    }
 }
 
 // Event Listeners para alterações no carrinho
@@ -203,11 +221,8 @@ $('#add-payment').click(function() {
             </div>
             <div class="form-group">
                 <label>Valor</label>
-                <input type="number" class="form-control payment-amount" name="payments[${paymentIndex}][amount]" step="0.01" required>
+                <input type="number" class="form-control payment-amount" name="payments[${paymentIndex}][amount]" step="0.01" min="0" required>
             </div>
-            <button type="button" class="btn btn-danger btn-sm remove-payment">
-                <i class="fas fa-trash"></i> Remover
-            </button>
         </div>
     `;
     $('#payment-methods').append(newPayment);
@@ -216,6 +231,13 @@ $('#add-payment').click(function() {
 
 $(document).on('click', '.remove-payment', function() {
     $(this).closest('.payment-method').remove();
+});
+
+// Event listener para atualizar o troco quando o valor do pagamento mudar
+$(document).on('input', '.payment-amount', function() {
+    if ($(this).is(':first')) {
+        updateTroco();
+    }
 });
 
 // Submissão do formulário
@@ -228,13 +250,35 @@ $('#posForm').submit(function(e) {
     }
 
     let totalPayments = 0;
-    $('.payment-amount').each(function() {
-        totalPayments += parseFloat($(this).val()) || 0;
+    let hasCashPayment = false;
+    let cashAmount = 0;
+
+    $('.payment-method').each(function() {
+        const method = $(this).find('.payment-type').val();
+        const amount = parseFloat($(this).find('.payment-amount').val()) || 0;
+        
+        if (method === 'cash') {
+            hasCashPayment = true;
+            cashAmount = amount;
+        } else {
+            totalPayments += amount;
+        }
     });
 
-    if (Math.abs(totalPayments - total) > 0.01) {
-        alert('A soma dos pagamentos deve ser igual ao total da venda!');
-        return;
+    // Se tiver pagamento em dinheiro, adiciona apenas o valor necessário para completar o total
+    if (hasCashPayment) {
+        const remainingAmount = total - totalPayments;
+        if (cashAmount < remainingAmount) {
+            alert('O valor total dos pagamentos é menor que o total da venda!');
+            return;
+        }
+        totalPayments += remainingAmount; // Considera apenas o valor necessário do dinheiro
+    } else {
+        // Se não tiver dinheiro, a soma deve ser exata
+        if (Math.abs(totalPayments - total) > 0.01) {
+            alert('A soma dos pagamentos deve ser igual ao total da venda!');
+            return;
+        }
     }
 
     const formData = {
@@ -251,10 +295,21 @@ $('#posForm').submit(function(e) {
     };
 
     $('.payment-method').each(function() {
-        formData.payments.push({
-            method: $(this).find('.payment-type').val(),
-            amount: parseFloat($(this).find('.payment-amount').val())
-        });
+        const method = $(this).find('.payment-type').val();
+        const amount = parseFloat($(this).find('.payment-amount').val());
+        
+        // Se for pagamento em dinheiro e for maior que o necessário, ajusta para o valor exato
+        if (method === 'cash' && amount > (total - totalPayments + amount)) {
+            formData.payments.push({
+                method: method,
+                amount: total - totalPayments + amount
+            });
+        } else {
+            formData.payments.push({
+                method: method,
+                amount: amount
+            });
+        }
     });
 
     $.ajax({
