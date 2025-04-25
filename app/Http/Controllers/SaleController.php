@@ -8,6 +8,8 @@ use App\Models\Service;
 use App\Models\Product;
 use App\Models\Client;
 use App\Models\CashRegister;
+use App\Models\SaleItem;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -210,6 +212,143 @@ class SaleController extends Controller
 
     public function processSale(Request $request)
     {
-        return $this->store($request);
+        try {
+            // Verifica se existe um caixa aberto
+            $cashRegister = CashRegister::whereNull('closed_at')->first();
+            if (!$cashRegister) {
+                return response()->json([
+                    'error' => 'Não há caixa aberto. Por favor, abra o caixa antes de realizar vendas.'
+                ], 422);
+            }
+
+            $request->validate([
+                'client_id' => 'nullable|exists:clients,id',
+                'items' => 'required|array|min:1',
+                'items.*.id' => 'required|integer',
+                'items.*.type' => 'required|in:product,service',
+                'items.*.quantity' => 'required|integer|min:1',
+                'payments' => 'required|array|min:1',
+                'payments.*.method' => 'required|in:cash,credit_card,debit_card,pix',
+                'payments.*.amount' => 'required|numeric|min:0',
+                'discount_percent' => 'nullable|numeric|min:0|max:100',
+                'discount_value' => 'nullable|numeric|min:0'
+            ]);
+
+            DB::beginTransaction();
+
+            try {
+                // Criar a venda
+                $sale = Sale::create([
+                    'client_id' => $request->client_id,
+                    'user_id' => auth()->id(),
+                    'cash_register_id' => $cashRegister->id,
+                    'discount_percent' => $request->discount_percent ?? 0,
+                    'discount_value' => $request->discount_value ?? 0,
+                    'notes' => $request->notes,
+                    'subtotal' => 0,
+                    'total' => 0,
+                    'discount' => 0,
+                    'status' => 'completed'
+                ]);
+
+                $total = 0;
+
+                // Processar itens
+                foreach ($request->items as $item) {
+                    if ($item['type'] === 'product') {
+                        $product = Product::findOrFail($item['id']);
+                        
+                        // Verificar estoque
+                        if ($product->stock < $item['quantity']) {
+                            throw new \Exception("Produto {$product->name} não tem estoque suficiente.");
+                        }
+
+                        // Atualizar estoque
+                        $product->stock -= $item['quantity'];
+                        $product->save();
+
+                        $itemTotal = $product->price * $item['quantity'];
+                        
+                        // Criar item da venda
+                        SaleItem::create([
+                            'sale_id' => $sale->id,
+                            'product_id' => $product->id,
+                            'quantity' => $item['quantity'],
+                            'price' => $product->price,
+                            'total' => $itemTotal
+                        ]);
+
+                        $total += $itemTotal;
+                    } else {
+                        $service = Service::findOrFail($item['id']);
+                        $itemTotal = $service->price * $item['quantity'];
+                        
+                        // Criar item da venda
+                        SaleItem::create([
+                            'sale_id' => $sale->id,
+                            'service_id' => $service->id,
+                            'quantity' => $item['quantity'],
+                            'price' => $service->price,
+                            'total' => $itemTotal
+                        ]);
+
+                        $total += $itemTotal;
+                    }
+                }
+
+                // Aplicar desconto
+                if ($request->discount_percent > 0) {
+                    $discountAmount = ($total * $request->discount_percent) / 100;
+                    $total -= $discountAmount;
+                } elseif ($request->discount_value > 0) {
+                    $total -= $request->discount_value;
+                }
+
+                // Atualizar total da venda
+                $sale->total = $total;
+                $sale->save();
+
+                // Registrar pagamentos
+                $totalPayments = 0;
+                foreach ($request->payments as $payment) {
+                    $sale->payments()->create([
+                        'method' => $payment['method'],
+                        'amount' => $payment['amount']
+                    ]);
+                    $totalPayments += $payment['amount'];
+
+                    // Atualizar o caixa
+                    if ($payment['method'] === 'cash') {
+                        $cashRegister->cash_in += $payment['amount'];
+                    } elseif (in_array($payment['method'], ['credit_card', 'debit_card'])) {
+                        $cashRegister->card_total += $payment['amount'];
+                    } else {
+                        $cashRegister->pix_total += $payment['amount'];
+                    }
+                }
+
+                // Verificar se o total dos pagamentos está correto
+                if (abs($totalPayments - $total) > 0.01) {
+                    throw new \Exception('O total dos pagamentos não corresponde ao valor da venda.');
+                }
+
+                $cashRegister->save();
+
+                DB::commit();
+
+                return response()->json([
+                    'message' => 'Venda realizada com sucesso!',
+                    'sale_id' => $sale->id
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 422);
+        }
     }
 }

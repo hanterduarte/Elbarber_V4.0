@@ -180,9 +180,12 @@ function updateTotal() {
     total = Math.max(0, total);
     $('#total').text(`R$ ${total.toFixed(2).replace('.', ',')}`);
     
-    // Sempre atualiza o valor do primeiro campo de pagamento com o valor total após desconto
+    // Atualiza o valor do primeiro campo de pagamento apenas se estiver vazio ou se o valor atual for menor que o total
     const firstPayment = $('.payment-amount').first();
-    firstPayment.val(total.toFixed(2));
+    const currentValue = parseFloat(firstPayment.val()) || 0;
+    if (currentValue === 0 || currentValue < total) {
+        firstPayment.val(total.toFixed(2));
+    }
     
     updateTroco();
 }
@@ -418,7 +421,7 @@ function openCashier() {
         if (result.isConfirmed) {
             // Enviar dados para o servidor
             $.ajax({
-                url: '/cashier/open',
+                url: '/cash-registers/open',
                 method: 'POST',
                 data: result.value,
                 success: function(response) {
@@ -438,7 +441,7 @@ function cashWithdrawal() {
         title: 'Sangria de Caixa',
         html: `
             <div class="form-group">
-                <label>Valor da Sangria</label>
+                <label>Valor</label>
                 <input type="number" id="withdrawal-amount" class="form-control" step="0.01" min="0">
             </div>
             <div class="form-group">
@@ -459,7 +462,7 @@ function cashWithdrawal() {
         if (result.isConfirmed) {
             // Enviar dados para o servidor
             $.ajax({
-                url: '/cashier/withdrawal',
+                url: '/cash-registers/withdraw',
                 method: 'POST',
                 data: result.value,
                 success: function(response) {
@@ -479,7 +482,7 @@ function cashReinforcement() {
         title: 'Reforço de Caixa',
         html: `
             <div class="form-group">
-                <label>Valor do Reforço</label>
+                <label>Valor</label>
                 <input type="number" id="reinforcement-amount" class="form-control" step="0.01" min="0">
             </div>
             <div class="form-group">
@@ -500,7 +503,7 @@ function cashReinforcement() {
         if (result.isConfirmed) {
             // Enviar dados para o servidor
             $.ajax({
-                url: '/cashier/reinforcement',
+                url: '/cash-registers/reinforcement',
                 method: 'POST',
                 data: result.value,
                 success: function(response) {
@@ -533,7 +536,7 @@ function closeCashier() {
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
             return {
-                closing_amount: document.getElementById('closing-amount').value,
+                final_amount: document.getElementById('closing-amount').value,
                 notes: document.getElementById('closing-notes').value
             }
         }
@@ -541,7 +544,7 @@ function closeCashier() {
         if (result.isConfirmed) {
             // Enviar dados para o servidor
             $.ajax({
-                url: '/cashier/close',
+                url: '/cash-registers/close',
                 method: 'POST',
                 data: result.value,
                 success: function(response) {

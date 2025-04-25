@@ -214,7 +214,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Valor</label>
-                                <input type="number" class="form-control payment-amount" name="payments[0][amount]" step="0.01" min="0" required>
+                                <input type="number" class="form-control payment-amount" name="payments[0][amount]" min="0" step="0.01" required>
                             </div>
                             <div class="form-group">
                                 <label>Troco</label>

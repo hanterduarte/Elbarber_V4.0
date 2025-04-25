@@ -50,16 +50,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('pdv/sale', [SaleController::class, 'processSale'])->name('pdv.sale');
 
     // Cash Register Management
-    Route::resource('cash-registers', CashRegisterController::class);
-    Route::post('cash-registers/open', [CashRegisterController::class, 'open'])->name('cash-registers.open');
-    Route::post('cash-registers/close/{cashRegister}', [CashRegisterController::class, 'close'])->name('cash-registers.close');
-    Route::post('cash-registers/withdraw', [CashRegisterController::class, 'withdraw'])->name('cash-registers.withdraw');
-
-    // Rotas do Caixa
-    Route::prefix('cashier')->group(function () {
-        Route::post('/open', [CashierController::class, 'open'])->name('cashier.open');
-        Route::post('/withdrawal', [CashierController::class, 'withdrawal'])->name('cashier.withdrawal');
-        Route::post('/reinforcement', [CashierController::class, 'reinforcement'])->name('cashier.reinforcement');
-        Route::post('/close', [CashierController::class, 'close'])->name('cashier.close');
+    Route::middleware(['permission:manage_cash'])->group(function () {
+        Route::resource('cash-registers', CashRegisterController::class);
+        Route::post('cash-registers/open', [CashRegisterController::class, 'open'])->name('cash-registers.open');
+        Route::post('cash-registers/close/{cashRegister}', [CashRegisterController::class, 'close'])->name('cash-registers.close');
+        Route::post('cash-registers/withdraw', [CashRegisterController::class, 'withdraw'])->name('cash-registers.withdraw');
+        Route::post('cash-registers/reinforcement', [CashRegisterController::class, 'reinforcement'])->name('cash-registers.reinforcement');
     });
 });

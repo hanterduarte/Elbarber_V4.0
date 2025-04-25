@@ -140,4 +140,24 @@ class CashRegisterController extends Controller
 
         return response()->json(['message' => 'Sangria realizada com sucesso!']);
     }
+
+    public function reinforcement(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0.01',
+            'notes' => 'nullable|string'
+        ]);
+
+        $cashRegister = CashRegister::whereNull('closed_at')->first();
+
+        if (!$cashRegister) {
+            return response()->json(['error' => 'Não há caixa aberto!'], 400);
+        }
+
+        $cashRegister->cash_in += $request->amount;
+        $cashRegister->notes = $cashRegister->notes . "\nReforço: R$ " . number_format($request->amount, 2) . " - " . $request->notes;
+        $cashRegister->save();
+
+        return response()->json(['message' => 'Reforço realizado com sucesso!']);
+    }
 }
