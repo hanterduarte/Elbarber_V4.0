@@ -57,15 +57,26 @@ class AppointmentController extends Controller
             'client_id' => 'required|exists:clients,id',
             'barber_id' => 'required|exists:barbers,id',
             'service_id' => 'required|exists:services,id',
-            'start_time' => 'required|date',
+            'date' => 'required|date',
+            'time' => 'required',
             'notes' => 'nullable|string'
+        ], [
+            'client_id.required' => 'O campo cliente é obrigatório.',
+            'client_id.exists' => 'O cliente selecionado é inválido.',
+            'barber_id.required' => 'O campo barbeiro é obrigatório.',
+            'barber_id.exists' => 'O barbeiro selecionado é inválido.',
+            'service_id.required' => 'O campo serviço é obrigatório.',
+            'service_id.exists' => 'O serviço selecionado é inválido.',
+            'date.required' => 'O campo data é obrigatório.',
+            'date.date' => 'O campo data deve ser uma data válida.',
+            'time.required' => 'O campo horário é obrigatório.'
         ]);
 
         // Get the service to calculate end time and price
         $service = Service::findOrFail($validated['service_id']);
         
-        // Calculate end time based on service duration
-        $startTime = Carbon::parse($validated['start_time']);
+        // Combine date and time into start_time
+        $startTime = Carbon::parse($validated['date'] . ' ' . $validated['time']);
         $endTime = $startTime->copy()->addMinutes($service->duration);
         
         // Create appointment with calculated fields
@@ -132,16 +143,29 @@ class AppointmentController extends Controller
             'client_id' => 'required|exists:clients,id',
             'barber_id' => 'required|exists:barbers,id',
             'service_id' => 'required|exists:services,id',
-            'start_time' => 'required|date',
+            'date' => 'required|date',
+            'time' => 'required',
             'status' => 'required|in:scheduled,confirmed,completed,cancelled',
             'notes' => 'nullable|string'
+        ], [
+            'client_id.required' => 'O campo cliente é obrigatório.',
+            'client_id.exists' => 'O cliente selecionado é inválido.',
+            'barber_id.required' => 'O campo barbeiro é obrigatório.',
+            'barber_id.exists' => 'O barbeiro selecionado é inválido.',
+            'service_id.required' => 'O campo serviço é obrigatório.',
+            'service_id.exists' => 'O serviço selecionado é inválido.',
+            'date.required' => 'O campo data é obrigatório.',
+            'date.date' => 'O campo data deve ser uma data válida.',
+            'time.required' => 'O campo horário é obrigatório.',
+            'status.required' => 'O campo status é obrigatório.',
+            'status.in' => 'O status selecionado é inválido.'
         ]);
 
         // Get the service to calculate end time and price
         $service = Service::findOrFail($validated['service_id']);
         
-        // Calculate end time based on service duration
-        $startTime = Carbon::parse($validated['start_time']);
+        // Combine date and time into start_time
+        $startTime = Carbon::parse($validated['date'] . ' ' . $validated['time']);
         $endTime = $startTime->copy()->addMinutes($service->duration);
         
         // Update appointment with calculated fields

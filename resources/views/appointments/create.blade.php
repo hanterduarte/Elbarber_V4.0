@@ -26,7 +26,7 @@
             @endif
 
             <div class="form-group">
-                <label for="client_id">Cliente</label>
+                <label for="client_id">Cliente <span class="text-danger">*</span></label>
                 <select class="form-control select2 @error('client_id') is-invalid @enderror" id="client_id" name="client_id" required>
                     <option value="">Selecione um cliente</option>
                     @foreach($clients as $client)
@@ -41,12 +41,12 @@
             </div>
 
             <div class="form-group">
-                <label for="barber_id">Barbeiro</label>
+                <label for="barber_id">Barbeiro <span class="text-danger">*</span></label>
                 <select class="form-control select2 @error('barber_id') is-invalid @enderror" id="barber_id" name="barber_id" required>
                     <option value="">Selecione um barbeiro</option>
                     @foreach($barbers as $barber)
                         <option value="{{ $barber->id }}" {{ old('barber_id') == $barber->id ? 'selected' : '' }}>
-                            {{ $barber->name }}
+                            {{ $barber->user->name }}
                         </option>
                     @endforeach
                 </select>
@@ -56,7 +56,7 @@
             </div>
 
             <div class="form-group">
-                <label for="service_id">Serviço</label>
+                <label for="service_id">Serviço <span class="text-danger">*</span></label>
                 <select class="form-control select2 @error('service_id') is-invalid @enderror" id="service_id" name="service_id" required>
                     <option value="">Selecione um serviço</option>
                     @foreach($services as $service)
@@ -71,7 +71,7 @@
             </div>
 
             <div class="form-group">
-                <label for="date">Data</label>
+                <label for="date">Data <span class="text-danger">*</span></label>
                 <input type="date" class="form-control @error('date') is-invalid @enderror" id="date" name="date" value="{{ old('date') }}" required>
                 @error('date')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -79,7 +79,7 @@
             </div>
 
             <div class="form-group">
-                <label for="time">Horário</label>
+                <label for="time">Horário <span class="text-danger">*</span></label>
                 <input type="time" class="form-control @error('time') is-invalid @enderror" id="time" name="time" value="{{ old('time') }}" required>
                 @error('time')
                     <span class="invalid-feedback">{{ $message }}</span>
@@ -87,7 +87,7 @@
             </div>
 
             <div class="form-group">
-                <label for="status">Status</label>
+                <label for="status">Status <span class="text-danger">*</span></label>
                 <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required>
                     <option value="scheduled" {{ old('status') == 'scheduled' ? 'selected' : '' }}>Agendado</option>
                     <option value="confirmed" {{ old('status') == 'confirmed' ? 'selected' : '' }}>Confirmado</option>
