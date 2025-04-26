@@ -42,7 +42,7 @@ class RoleSeeder extends Seeder
         $admin->permissions()->attach(Permission::all());
 
         // Atribuir permissões ao Gerente
-        $managerPermissions = Permission::whereIn('slug', [
+        $managerPermissions = Permission::whereIn('tipo_permissao', [
             'view-users',
             'view-reports',
             'manage-appointments',
@@ -52,7 +52,7 @@ class RoleSeeder extends Seeder
         $manager->permissions()->attach($managerPermissions);
 
         // Atribuir permissões ao Barbeiro
-        $barberPermissions = Permission::whereIn('slug', [
+        $barberPermissions = Permission::whereIn('tipo_permissao', [
             'manage-appointments',
             'manage-services',
             'view-reports'
@@ -60,7 +60,7 @@ class RoleSeeder extends Seeder
         $barber->permissions()->attach($barberPermissions);
 
         // Atribuir permissões ao Recepcionista
-        $receptionistPermissions = Permission::whereIn('slug', [
+        $receptionistPermissions = Permission::whereIn('tipo_permissao', [
             'manage-appointments',
             'manage-clients'
         ])->get();

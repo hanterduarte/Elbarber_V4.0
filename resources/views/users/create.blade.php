@@ -21,7 +21,19 @@
                     <h5><i class="icon fas fa-ban"></i> Erro!</h5>
                     <ul class="mb-0">
                         @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                            <li>
+                                @if($error == 'The roles field is required.')
+                                    O campo perfil é obrigatório.
+                                @elseif($error == 'The password field is required.')
+                                    O campo senha é obrigatório.
+                                @elseif($error == 'The email field is required.')
+                                    O campo email é obrigatório.
+                                @elseif($error == 'The name field is required.')
+                                    O campo nome é obrigatório.
+                                @else
+                                    {{ $error }}
+                                @endif
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -31,7 +43,7 @@
                 <label for="name">Nome</label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
                 @error('name')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span class="invalid-feedback">O campo nome é obrigatório.</span>
                 @enderror
             </div>
 
@@ -39,7 +51,7 @@
                 <label for="email">Email</label>
                 <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
                 @error('email')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span class="invalid-feedback">O campo email é obrigatório.</span>
                 @enderror
             </div>
 
@@ -47,7 +59,7 @@
                 <label for="password">Senha</label>
                 <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
                 @error('password')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                    <span class="invalid-feedback">O campo senha é obrigatório.</span>
                 @enderror
             </div>
 
@@ -57,17 +69,17 @@
             </div>
 
             <div class="form-group">
-                <label for="role">Perfil</label>
-                <select class="form-control @error('role') is-invalid @enderror" id="role" name="role" required>
+                <label for="roles">Perfil</label>
+                <select class="form-control @error('roles') is-invalid @enderror" id="roles" name="roles[]" required>
                     <option value="">Selecione um perfil</option>
                     @foreach($roles as $role)
-                        <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
-                            {{ ucfirst($role->name) }}
+                        <option value="{{ $role->id }}" {{ (old('roles') && in_array($role->id, old('roles'))) ? 'selected' : '' }}>
+                            {{ $role->name }}
                         </option>
                     @endforeach
                 </select>
-                @error('role')
-                    <span class="invalid-feedback">{{ $message }}</span>
+                @error('roles')
+                    <span class="invalid-feedback">O campo perfil é obrigatório.</span>
                 @enderror
             </div>
 

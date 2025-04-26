@@ -24,7 +24,7 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Slug</th>
+                                <th>Tipo de Permissão</th>
                                 <th>Descrição</th>
                                 <th>Ações</th>
                             </tr>
@@ -33,7 +33,7 @@
                             @foreach($permissions as $permission)
                                 <tr>
                                     <td>{{ $permission->name }}</td>
-                                    <td>{{ $permission->slug }}</td>
+                                    <td>{{ $permission->tipo_permissao }}</td>
                                     <td>{{ $permission->description }}</td>
                                     <td>
                                         <a href="{{ route('permissions.edit', $permission) }}" class="btn btn-sm btn-info">

@@ -23,12 +23,13 @@ class PermissionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'tipo_permissao' => 'required|string|max:255|unique:permissions',
             'description' => 'nullable|string|max:255',
         ]);
 
         Permission::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'tipo_permissao' => $request->tipo_permissao,
             'description' => $request->description,
         ]);
 
@@ -45,12 +46,13 @@ class PermissionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'tipo_permissao' => 'required|string|max:255|unique:permissions,tipo_permissao,' . $permission->id,
             'description' => 'nullable|string|max:255',
         ]);
 
         $permission->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
+            'tipo_permissao' => $request->tipo_permissao,
             'description' => $request->description,
         ]);
 
@@ -62,6 +64,6 @@ class PermissionController extends Controller
     {
         $permission->delete();
         return redirect()->route('permissions.index')
-            ->with('success', 'Permissão removida com sucesso.');
+            ->with('success', 'Permissão excluída com sucesso.');
     }
 } 
