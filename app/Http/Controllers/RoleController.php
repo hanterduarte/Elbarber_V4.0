@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Permission;
-use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -40,7 +39,6 @@ class RoleController extends Controller
 
         $role = Role::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
             'description' => $request->description,
         ]);
 
@@ -83,7 +81,6 @@ class RoleController extends Controller
 
         $role->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->name),
             'description' => $request->description,
         ]);
 

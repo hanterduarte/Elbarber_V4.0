@@ -37,15 +37,14 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-            'is_active' => 'boolean'
+            'roles.*' => 'exists:roles,id'
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'is_active' => $validated['is_active'] ?? true
+            'is_active' => $request->has('is_active')
         ]);
 
         $user->roles()->sync($validated['roles']);
@@ -85,14 +84,13 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8',
             'roles' => 'required|array',
-            'roles.*' => 'exists:roles,id',
-            'is_active' => 'boolean'
+            'roles.*' => 'exists:roles,id'
         ]);
 
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'is_active' => $validated['is_active'] ?? true
+            'is_active' => $request->has('is_active')
         ];
 
         if (!empty($validated['password'])) {
