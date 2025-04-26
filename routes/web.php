@@ -13,6 +13,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashRegisterController;
 use App\Http\Controllers\CashierController;
+use App\Http\Controllers\PermissionController;
 
 // Authentication Routes
 Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -57,4 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('cash-registers/withdraw', [CashRegisterController::class, 'withdraw'])->name('cash-registers.withdraw');
         Route::post('cash-registers/reinforcement', [CashRegisterController::class, 'reinforcement'])->name('cash-registers.reinforcement');
     });
+
+    // Rotas de Permissões e Papéis
+    Route::resource('permissions', PermissionController::class);
 });

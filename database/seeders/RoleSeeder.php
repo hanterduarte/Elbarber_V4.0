@@ -10,60 +10,60 @@ class RoleSeeder extends Seeder
 {
     public function run(): void
     {
-        // Criar role de administrador
-        $adminRole = Role::create([
-            'name' => 'admin',
-            'description' => 'Administrador do sistema'
+        // Criar papel de Administrador
+        $admin = Role::create([
+            'name' => 'Administrador',
+            'slug' => 'admin',
+            'description' => 'Administrador do sistema com acesso total'
         ]);
 
-        // Atribuir todas as permissões ao administrador
-        $adminRole->permissions()->attach(Permission::all());
-
-        // Criar role de gerente
-        $managerRole = Role::create([
-            'name' => 'manager',
-            'description' => 'Gerente do estabelecimento'
+        // Criar papel de Gerente
+        $manager = Role::create([
+            'name' => 'Gerente',
+            'slug' => 'manager',
+            'description' => 'Gerente com acesso a relatórios e gerenciamento'
         ]);
 
-        // Atribuir permissões específicas ao gerente
-        $managerPermissions = Permission::whereIn('name', [
-            'manage_clients',
-            'manage_barbers',
-            'manage_services',
-            'manage_products',
-            'manage_appointments',
-            'manage_sales',
-            'manage_cash'
+        // Criar papel de Barbeiro
+        $barber = Role::create([
+            'name' => 'Barbeiro',
+            'slug' => 'barber',
+            'description' => 'Barbeiro com acesso a agendamentos e serviços'
+        ]);
+
+        // Criar papel de Recepcionista
+        $receptionist = Role::create([
+            'name' => 'Recepcionista',
+            'slug' => 'receptionist',
+            'description' => 'Recepcionista com acesso a agendamentos e clientes'
+        ]);
+
+        // Atribuir todas as permissões ao Administrador
+        $admin->permissions()->attach(Permission::all());
+
+        // Atribuir permissões ao Gerente
+        $managerPermissions = Permission::whereIn('slug', [
+            'view-users',
+            'view-reports',
+            'manage-appointments',
+            'manage-services',
+            'manage-clients'
         ])->get();
+        $manager->permissions()->attach($managerPermissions);
 
-        $managerRole->permissions()->attach($managerPermissions);
-
-        // Criar role de barbeiro
-        $barberRole = Role::create([
-            'name' => 'barber',
-            'description' => 'Barbeiro do estabelecimento'
-        ]);
-
-        // Atribuir permissões específicas ao barbeiro
-        $barberPermissions = Permission::whereIn('name', [
-            'manage_appointments'
+        // Atribuir permissões ao Barbeiro
+        $barberPermissions = Permission::whereIn('slug', [
+            'manage-appointments',
+            'manage-services',
+            'view-reports'
         ])->get();
+        $barber->permissions()->attach($barberPermissions);
 
-        $barberRole->permissions()->attach($barberPermissions);
-
-        // Criar role de recepcionista
-        $receptionistRole = Role::create([
-            'name' => 'receptionist',
-            'description' => 'Recepcionista do estabelecimento'
-        ]);
-
-        // Atribuir permissões específicas ao recepcionista
-        $receptionistPermissions = Permission::whereIn('name', [
-            'manage_clients',
-            'manage_appointments',
-            'manage_sales'
+        // Atribuir permissões ao Recepcionista
+        $receptionistPermissions = Permission::whereIn('slug', [
+            'manage-appointments',
+            'manage-clients'
         ])->get();
-
-        $receptionistRole->permissions()->attach($receptionistPermissions);
+        $receptionist->permissions()->attach($receptionistPermissions);
     }
 } 

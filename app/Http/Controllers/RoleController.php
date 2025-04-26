@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Permission;
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
@@ -13,7 +14,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with('permissions')->paginate(10);
+        $roles = Role::with('permissions')->get();
         return view('roles.index', compact('roles'));
     }
 
@@ -31,22 +32,24 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles',
-            'description' => 'nullable|string',
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id'
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'permissions' => 'array',
         ]);
 
         $role = Role::create([
-            'name' => $validated['name'],
-            'description' => $validated['description']
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'description' => $request->description,
         ]);
 
-        $role->permissions()->sync($validated['permissions']);
+        if ($request->has('permissions')) {
+            $role->permissions()->sync($request->permissions);
+        }
 
         return redirect()->route('roles.index')
-            ->with('success', 'Perfil cadastrado com sucesso!');
+            ->with('success', 'Papel criado com sucesso.');
     }
 
     /**
@@ -61,9 +64,8 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        $role = Role::with('permissions')->findOrFail($id);
         $permissions = Permission::all();
         return view('roles.edit', compact('role', 'permissions'));
     }
@@ -71,43 +73,33 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Role $role)
     {
-        $role = Role::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'description' => 'nullable|string',
-            'permissions' => 'required|array',
-            'permissions.*' => 'exists:permissions,id'
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'permissions' => 'array',
         ]);
 
         $role->update([
-            'name' => $validated['name'],
-            'description' => $validated['description']
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'description' => $request->description,
         ]);
 
-        $role->permissions()->sync($validated['permissions']);
+        $role->permissions()->sync($request->permissions ?? []);
 
         return redirect()->route('roles.index')
-            ->with('success', 'Perfil atualizado com sucesso!');
+            ->with('success', 'Papel atualizado com sucesso.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        $role = Role::findOrFail($id);
-        
-        if ($role->users()->count() > 0) {
-            return redirect()->route('roles.index')
-                ->with('error', 'Não é possível excluir um perfil que está em uso por usuários.');
-        }
-
         $role->delete();
-
         return redirect()->route('roles.index')
-            ->with('success', 'Perfil excluído com sucesso!');
+            ->with('success', 'Papel removido com sucesso.');
     }
 }

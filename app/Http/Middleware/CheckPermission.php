@@ -14,16 +14,10 @@ class CheckPermission
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $permission): Response
+    public function handle(Request $request, Closure $next, $permission): Response
     {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        $user = Auth::user();
-        
-        if (!$user->hasPermission($permission)) {
-            abort(403, 'Unauthorized action.');
+        if (!$request->user() || !$request->user()->hasPermission($permission)) {
+            abort(403, 'Acesso não autorizado.');
         }
 
         return $next($request);

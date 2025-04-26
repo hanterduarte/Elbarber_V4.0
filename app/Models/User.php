@@ -77,13 +77,14 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        return $this->roles()->where('name', $role)->exists();
+        if (is_string($role)) {
+            return $this->roles->contains('slug', $role);
+        }
+        return !!$role->intersect($this->roles)->count();
     }
 
     public function hasPermission($permission)
     {
-        return $this->roles()->whereHas('permissions', function ($query) use ($permission) {
-            $query->where('name', $permission);
-        })->exists();
+        return $this->roles->map->permissions->flatten()->contains('slug', $permission);
     }
 }
