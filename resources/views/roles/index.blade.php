@@ -24,7 +24,6 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Slug</th>
                                 <th>Descrição</th>
                                 <th>Permissões</th>
                                 <th>Ações</th>
@@ -34,7 +33,6 @@
                             @foreach($roles as $role)
                                 <tr>
                                     <td>{{ $role->name }}</td>
-                                    <td>{{ $role->slug }}</td>
                                     <td>{{ $role->description }}</td>
                                     <td>
                                         @foreach($role->permissions as $permission)
