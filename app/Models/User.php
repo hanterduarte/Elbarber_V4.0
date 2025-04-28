@@ -78,13 +78,13 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         if (is_string($role)) {
-            return $this->roles->contains('name', $role);
+            return $this->roles->contains('slug', $role);
         }
         return !!$role->intersect($this->roles)->count();
     }
 
     public function hasPermission($permission)
     {
-        return $this->roles->map->permissions->flatten()->contains('tipo_permissao', $permission);
+        return $this->roles->map->permissions->flatten()->contains('slug', $permission);
     }
 }

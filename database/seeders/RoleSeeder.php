@@ -13,24 +13,28 @@ class RoleSeeder extends Seeder
         // Criar papel de Administrador
         $admin = Role::create([
             'name' => 'Administrador',
+            'slug' => 'admin',
             'description' => 'Administrador do sistema com acesso total'
         ]);
 
         // Criar papel de Gerente
         $manager = Role::create([
             'name' => 'Gerente',
+            'slug' => 'manager',
             'description' => 'Gerente com acesso a relatórios e gerenciamento'
         ]);
 
         // Criar papel de Barbeiro
         $barber = Role::create([
             'name' => 'Barbeiro',
+            'slug' => 'barber',
             'description' => 'Barbeiro com acesso a agendamentos e serviços'
         ]);
 
         // Criar papel de Recepcionista
         $receptionist = Role::create([
             'name' => 'Recepcionista',
+            'slug' => 'receptionist',
             'description' => 'Recepcionista com acesso a agendamentos e clientes'
         ]);
 

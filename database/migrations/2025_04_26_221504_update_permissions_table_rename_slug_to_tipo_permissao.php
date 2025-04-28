@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            //
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->renameColumn('slug', 'tipo_permissao');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            //
+        Schema::table('permissions', function (Blueprint $table) {
+            $table->renameColumn('tipo_permissao', 'slug');
         });
     }
 };
